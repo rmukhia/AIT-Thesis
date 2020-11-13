@@ -162,7 +162,7 @@ From these studies of performance comparisons OSLR seems to be the most suited t
 
 Optimized Link State Routing Protocol (OSLR) belongs to the class of link state routing protocol, with optimization for mobile ad hoc networks.  It is a distributed protocol with no central agency that exchanges topology information with other node of the network periodically. Each node maintains a routing table, and is a proactive protocol. When data is to be sent, it refers to the routing table. The route to other nodes are maintained by each node proactively. 
 
-HELLO message is used for link sensing, neighbor detection, and MPR selection. HELLO messages are not forwarded by the nodes. The nodes in OSLR use only selected nodes called multipoint relay (MPR) to re-transmit control messages, reducing overhead from control messages flooding the network. Each node in the network selects a set of nodes in its symmetric 1-hop neighborhood called MPR set of that node. Neighbors which do not belong to MPR set of the node receive and process broadcast messages but do not re-transmit it. If an interface of a node has at least one verified bi-directional link with an interface of another node, it is considered as its symmetric 1-hop neighbor. 
+HELLO message is used for link sensing, neighbor detection, and multipoint relay (MPR) selection. HELLO messages are not forwarded by the nodes. The nodes in OSLR use only selected nodes called multipoint relay (MPR) to re-transmit control messages, reducing overhead from control messages flooding the network. Each node in the network selects a set of nodes in its symmetric 1-hop neighborhood called MPR set of that node. Neighbors which do not belong to MPR set of the node receive and process broadcast messages but do not re-transmit it. If an interface of a node has at least one verified bi-directional link with an interface of another node, it is considered as its symmetric 1-hop neighbor. 
 
 Topology Control (TC) message is used to disseminated topology information through the network, using optimized flooding through MPR mechanism. The TC messages distributed to each node is used to calculate routing table in each node.
 
@@ -196,7 +196,7 @@ Surveys of FANET has been carried out by \shortciteA{Chriki2019} and \shortciteA
 	\item \textit{Localization.} UAVs because of its higher mobility degree may have inaccurate GPS position information as compared to other MANETs.	
 \end{itemize}
 
-Routing protocols for FANET follows similar classfication as WMNs and are as follows:
+Routing protocols for FANET follows similar classification as WMNs and are as follows:
 
 \begin{itemize} 
 	\item \textit{Static protocols.} These protocols have fixed routing tables.
@@ -226,12 +226,78 @@ Some of the classification of simulations are:
 	\item \textit{Continuous simulation.} Simulation is based on continuous time and uses numerical integration of differential equations.
 	\item \textit{Discrete-event simulation.} Simulation is based on discrete time intervals. The state of the components of the simulation change their value only at discrete time. 
 	\item \textit{Stochastic simulation.} Simulation with same input will produce different results within some confidence interval. During simulation some variables or process is subject to random variations.
-	\item \textit{Deterministic simulation.} Simulation with same input will always produce the same deterministic results. The variables and process are regulated by deterministic algorithms. 
+	\item \textit{Deterministic simulation.} Simulation with same input will always produce the same deterministic results. The variables and process are regulated by deterministic algorithms.
 \end{itemize}
 
 \subsection{Computer Network Simulators}
 
-\subsection{Robotics Simulator}
+Network simulators are those types of software that are capable of performing predictions on how a computer network will behave. The output of these simulations can be analyzed to derived metrics of the network under consideration. The use of network simulators provide a cost-effective method to validate and optimize the performance of the network before deployment. Network simulators may have the capability for emulation, that is, to pass real packets through the network simulation, and examine the effects of the network on the packets. 
+
+\shortciteA{Siraj2012} has done survey on network simulators (ns-2, ns-3, OPNET, NetSim, OMNet++, REAL, J-Sim and QualNet), their availability, programming languages used and their architecture.  \shortciteA{Toor2017} has done survey on network simulator which can support wireless infrastructure (ns-2, Ns-3, J-Sim, OMNeT++, OPNET, QUALNET and MATLAB) and listed their key features and limitations. \shortciteA{Patel2018} has done survey on network simulator (ns-2, ns-3, OMNeT++, NetSim, REAL, OPNET and QualNet) and listed their features, advantages, disadvantages.
+
+Network Simulator 3 (ns-3) is a discrete-event network simulator, and it's intended uses are for research and education. It is written from scratch using C++ and is not backward compatible with ns-2. NS-3 is a collection of core libraries, modules, and applications which are build using a python based build tool called waf. It can be linked with a user C++ or python application to create a simulation. It is possible to integrate ns-3 with other software through the user application. The architecture of ns-3 is illustrated in figure \ref{fig:ns3-architecture}. In this paper I use ns-3 because:
+\begin{itemize}
+	\item It is intended for scientific research.
+	\item It is more flexible than other simulators.
+	\item It tries to simulate protocol genuinely.
+	\item It is open source and free to use.
+	\item It can be integrated with other software.
+	\item It is actively developed and maintained. ns-2 development stopped around 2010.
+\end{itemize}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=5in]{figures/literature/ns3-architecture}
+	\caption[Ns-3 architecture]{\small 
+		Ns-3 architecture. Reprinted from \shortciteA{Siraj2012} }
+	\label{fig:ns3-architecture}
+\end{figure}
+
+\subsection{Robotics Simulator and Robotic Software}
+
+Applications for physical robots can be created using robotics simulator without depending on the real hardware. This saves time and cost in the development of the application. Certain robotics simulator can render 3D model of robots and its environment, and can emulate robotic models, sensors, and control in virtual environment. They use physics engine to make the simulation more realistic.
+
+\shortciteA{Staranowicz2011} has conducted a survey presenting comparison between the popular commercial and open-source robotic software for simulation and interfacing with real robots.  \shortciteA{Ivaldi2014} has conducted an online survey where participants present their feedback about the tools and use of dynamic simulation in robotics.
+
+The most used robotics simulator are:
+\begin{itemize}
+	\item \textit{Gazebo.} Gazebo can simulate multiple robots in outdoor environments. It supports multiple physics engine. It can intergate with ROS using a set of ROS packages named gazebo\_ros\_pkgs. Gazebo is open source and free to use.
+	\item \textit{ODE.} Open Dynamics Engine is a open-source physics library for simulating rigid body dynamics. It is used in computer games and simulation tools. It is open source.
+	\item \textit{Bullet.} Bullet is an open-source physics library and is used in 3D animation software and game engines. It is open source.
+	\item \textit{V-Rep.} V-Rep is a robot simulator software developed by Coppelia Robotics. It is free for academic usage. Commercial license is not free. 
+	\item \textit{Webots.} Webots is an open-source robot simulator developed by Cyberbotics. It was open sourced in 2018. Robots can be modeled, programmed and simulated with the provided development environment.
+\end{itemize}  
+
+In this study, I intend to use Gazebo as the robotics simulator because:
+
+\begin{itemize}
+	\item The UAV firmware PixHawk provides SITL simulation for Gazebo and is the recommended option. 
+	\item Gazebo supports PixHawk provided quad-copter (Iris).
+	\item Gazebo supports multiple quad-copters.
+	\item External world can be built in Gazebo using real world height maps.
+	\item Gazebo supports sensors such as GPS and cameras.
+	\item Gazebo can be integrated with ROS.
+	\item Gazebo server provides API to integrate with other software. In my use case, I update the FANET nodes in ns-3 using the position provided by the robotics simulator. 
+\end{itemize}
+
+\section{Robot Operating System}
+\shortciteA{Quigley2009} presents an overview of Robot Operating System (ROS). ROS is a framework for robotics software. It provides set of tools and communication layer on top of a host operating system, which helps in developing software for robotics. Availability of plethora of open source ROS packages avoids reinventing the wheel while developing the application.
+
+ROS provides peer-to-peer connection to different processes of the robotics system. Each process is called a node and handles a specific aspect of the robotic system. The peer-to-peer topology makes use of a master node which enables the running nodes to find each other at run-time. Nodes exchange information with each other using messages. A message is a predefined strictly typed data structure. Nodes can exchange messages using either topic or service.
+
+Nodes can publish message on a topic. Another node which uses the data generated by it can subscribe to the topic to receive messages. Nodes and topics have many-to-many association with each other. A single node can publish and subscribe to many topics and a topic may be published and subscribed by many nodes at once.
+
+For synchronous communication, a node may call a service registered by another node. A node sends a request message to call a service and the node providing the service will reply with a response message. Unlike topics, service of a particular name can only be advertised by one node.
+
+Nodes, topics and services can be grouped into namespaces. Topics and services follow URI reference naming convention. For example a topic that publishes GPS information for UAV 1 in a multi-UAV system may be named as \textit{/uav0/global\_position/gps}.
+
+ROS has tranformation system called tf/tf2. Tf2 is the new iteration of the transformation library. The transformation system helps the user keep track of multiple coordinate frames over time by using a tree structure to maintain relationship between coordinate frames. It allows for easy transformation of data between any two coordinate frames.
+
+ROS has a wide array of tools for creating, debugging, inspecting and visualizing the data exchanged between the different nodes which speeds up the development.
+
+
+\section{Complete Coverage Problem}
+
 
 
 \FloatBarrier

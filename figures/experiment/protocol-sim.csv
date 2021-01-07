@@ -1,0 +1,9 @@
+Protocol,Percent Packets,Packets,Percent Bytes,Bytes
+Malformed Packet,0.15,335,0.000,0
+Logical-Link Control,47.33,102928,73.296,26488790
+Internet Protocol Version 4,47.29,102836,5.691,2056720
+User Datagram Protocol,47.29,102836,2.276,822688
+Real-time Transport Control Protocol,0.02,36,0.065,23472
+Optimized Link State Routing Protocol,27.18,59120,7.194,2599896
+Data,20.07,43647,54.640,19746698
+Address Resolution Protocol,0.04,92,0.007,2576

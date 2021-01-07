@@ -33,7 +33,7 @@ The components on the GCS are illustrated in Figure~\ref{fig:gcs-components} and
 	\item \textit{Robot Operating System.} All the components is designed and implemented with ROS as the base infrastructure. This gives access to the plethora of ROS tools and packages.
 	\item \textit{mapviz.} Mapviz running as a plugin inside rqt is the GUI interface for the system. Mapviz is a ROS-based visualization tool with a plug-in system focused on visualization of 2D data. It shows tiled maps using the Microsoft Bing Maps API and has plugins to select polygons on the map, show markers, show NavSat data, among other features that fit the requirements of this system. Mapviz also allows us to fix the origin of the global map.
 	\item \textit{image\_pipeline}. ROS image pipeline is used to rectify the image obtained from the cameras attached to the drones.
-	\item \textit{pegasus\_planner.} A new multi-agent path planning ROS node designed for the project.
+	\item \textit{pegasus\_planner.} A new multi-agent path planning ROS node is designed for the project.
 	\item \textit{pegasus\_controller.} A new ROS node that calculates and maintains translations between different map frames, monitor links with the drones, transmit path planning information to the drones, and coordinate the drones during flight.
 	\item \textit{pegasus\_image\_subscriber.} A new ROS node that requests and receives images from the drones.
 	\item \textit{pegasus\_image\_rectify.} A new ROS node that rectifies the received images for each individual drones' cameras using image\_pipeline.  
@@ -49,15 +49,15 @@ The components on the GCS are illustrated in Figure~\ref{fig:gcs-components} and
 
 The components in the drones are illustrated in Figure~\ref{fig:drone-components} and as follows:
 \begin{itemize}
-	\item \textit{Flight Controller.} The drones will use Pixhawk flight controllers with PX4 as their firmware.
-	\item \textit{Companion Computer.} The companion computer will control the flight controller in OFFBOARD mode through a serial link.
-	\item \textit{Mobile wireless mesh router.} The mobile wireless mesh router will maintain mesh network using OSLR, and will provide network to the companion computer through ethernet link.
-	\item \textit{USB camera.} The USB camera attached to the computer will enable the drone to capture images.
-	\item \textit{Robot Operating System.} The software components will be designed and implemented as ROS nodes.
-	\item \textit{mavros.} The companion computer will use mavros, a ROS package for MavLink communication between companion computers, and flight controllers, to control the flight controller in OFFBOARD.
-	\item \textit{gscam.}  Gscam will be used to acquire video stream from the camera attached to the drone. Gscam is a ROS package which is based upon gstreamer.
-	\item \textit{pegasus\_commander.} A new ROS node designed for the project that receives paths and control messages from the GCS. It will publish and subscribe to mavros for controlling, and receiving status of the drone. It will also send to the GCS, the drone's local poses, GPS positions, flight controller status updates, and GCS link monitoring information.
-	\item \textit{pegasus\_image\_publisher.} The video feed from the onboard camera will be captured, geo-tagged with GPS information and sent to the GCS by this component.
+	\item \textit{Flight Controller.} The drones uses Pixhawk flight controllers with PX4 as their firmware.
+	\item \textit{Companion Computer.} The companion computer controls the flight controller in off-board mode through a serial link.
+	\item \textit{Mobile wireless mesh router.} The mobile wireless mesh router maintains mesh network using OSLR, and provides network to the companion computer through ethernet link.
+	\item \textit{USB camera.} The USB camera attached to the computer enables the drone to capture images.
+	\item \textit{Robot Operating System.} The software components are designed and implemented as ROS nodes.
+	\item \textit{mavros.} The companion computer uses mavros, a ROS package for MavLink communication between companion computers, and flight controllers, to control the flight controller in off-board.
+	\item \textit{gscam.}  Gscam is used to acquire video stream from the camera attached to the drone. Gscam is a ROS package which is based upon gstreamer.
+	\item \textit{pegasus\_commander.} A new ROS node designed for the project that receives paths and control messages from the GCS. It publishes and subscribe to mavros for controlling, and receiving status of the drone. It also sends to the GCS, the drone's local poses, GPS positions, flight controller status updates, and GCS link monitoring information.
+	\item \textit{pegasus\_image\_publisher.} The video feed from the onboard camera is captured, geo-tagged with GPS information and sent to the GCS by this component.
 \end{itemize}
 
 \begin{figure}
@@ -68,7 +68,7 @@ The components in the drones are illustrated in Figure~\ref{fig:drone-components
 \end{figure}
 
 
-The operator will select the global map origin and region of interest through mapviz. The pegasus\_planner will create a grid-based representation of the region of interest and plan the paths for the drones in the global map reference frame.  The path planned by pegasus\_planner will be sent to pegasus\_controller. Pegasus\_controller will run a calibration routine on each of the drones to find the transformation between the local origin of the drone and the global map origin. These transformations allow the system to maintain the global map (pegasus\_map), where planning is carried out and the local map (uav0\_map, uav1\_map, etc.), where the control of the drones are achieved as shown in Figure~\ref{fig:map-heirarichy}. After calibration completes, pegasus\_controller will transform the paths for the drones from global map to the local map for each drone and send it to the drone. Pegasus\_controller will monitor the link with each drone by sending a periodic heart-beat packet. If a drone does not receive a heart-beat packet for some interval, it will change to Return To Home (RTL) mode and abort its current path. To avoid collision, pegasus\_controller will also maintain a path index counter. Paths are made up of a list of poses. Pegasus\_controller will tell each drone to move to the next pose in its path when all the drones have reached their current goal pose.
+The operator selects the global map origin and region of interest through mapviz. The pegasus\_planner creates a grid-based representation of the region of interest and plan the paths for the drones in the global map reference frame.  The path planned by pegasus\_planner is sent to pegasus\_controller. Pegasus\_controller runs a calibration routine on each of the drones to find the transformation between the local origin of the drone and the global map origin. These transformations allow the system to maintain the global map (pegasus\_map), where planning is carried out and the local map (uav0\_map, uav1\_map, etc.), where the control of the drones are achieved as shown in Figure~\ref{fig:map-heirarichy}. After calibration completes, pegasus\_controller transforms the paths for the drones from global map to the local map for each drone and send it to the respective drone. Pegasus\_controller monitors the link with each drone by sending a periodic heart-beat packet. If a drone does not receive a heart-beat packet for some interval, it changes to Return To Home (RTL) mode and abort its current path. To avoid collision, pegasus\_controller also maintains a path index counter. Paths are made up of a list of poses. Pegasus\_controller tells each drone to move to the next pose in its path after all the drones have reached their current goal pose.
 
 \begin{figure}
 	\centering
@@ -78,25 +78,25 @@ The operator will select the global map origin and region of interest through ma
 \end{figure}
 
 
-The drones will use mavros, which exposes MavLink protocol parameters and services as ROS topics and services. Pegasus\_commander will receive commands and path information from the GCS and execute its plan while sending local poses, global GPS positions, and flight controller state information back to the GCS. Gscam will publish video stream from the USB camera as a ROS camera topic. The pegasus\_image\_publisher will capture images from the published camera topic, apply GPS exif tag and send them to the GCS, as it receives request from pegasus\_image\_subscriber that will save the received images to a local directory. 
+The drones uses mavros, a ROS package that exposes MavLink protocol parameters and services as ROS topics and services. Pegasus\_commander receives commands and path information from the GCS and executes its plan while sending local poses, global GPS positions, and flight controller state information back to the GCS. Gscam publishes video stream from the USB camera as a ROS camera topic. The pegasus\_image\_publisher captures images from the published camera topic, apply GPS EXIF tag and sends them to the GCS,  when it receives an image request from pegasus\_image\_subscriber. Pegasus\_image\_subscriber saves the received images to a local directory on the GCS. 
 
-Pegasus\_rectify\_image will rectify the images using the camera calibration parameters, prepare the images for map building and save them to a directory in GCS . The SfM module will construct an aerial map for the region of interest selected by the operator from these images.
+Pegasus\_rectify\_image rectifies the images received using the camera calibration parameters, prepares the images for map building and saves them to a directory in GCS . The SfM module constructs an aerial map for the region of interest selected by the operator from the rectified images.
 
 
 \subsection{Simulation}
 
-Most of the components will remain the same regardless of whether running in simulation or in the real world. The simulation will run in a single computer. Four more components will be utilized to simulate the system:
+Most of the components remains the same regardless of whether running in simulation or in the real world. The simulation runs in a single computer. Four more components will be utilized to simulate the system:
 \begin{itemize}
-	\item \textit{Gazebo.} Gazebo simulator will be used because it supports fleet of drones and camera feed.
-	\item \textit{PX4 Software in the loop.} PX4 firmware will be run as software in the loop, to simulate the drone's firmware. 
-	\item \textit{pegasus-net-sim.} A custom network simulator 3 module that will simulate the mobility of the drones and push and pop actual control messages and video feed between the drones and the GCS through the simulator. It will also publish the SNR status of each device in the network.
-	\item \textit{pegasus\_network\_status\_util\_node.} A custom ROS node that will receive noise and signal strength from pegasus-net-sim and publish the signal-to-noise ratio (SNR) value of each drone as ROS topic.
+	\item \textit{Gazebo.} Gazebo simulator is used because it supports fleet of drones and camera feed.
+	\item \textit{PX4 Software in the loop.} PX4 firmware is run as software in the loop, to simulate the drone's firmware. 
+	\item \textit{pegasus-net-sim.} A custom network simulator 3 module simulates the mobility of the drones, and simulate the network behavior of actual control messages and video feed between the drones and the GCS. It will also publish the SNR status of each device in the network.
+	\item \textit{pegasus\_network\_status\_util\_node.} A custom ROS node receives noise and signal strength from pegasus-net-sim and publishes the signal-to-noise ratio (SNR) value of each drone as ROS topic.
 \end{itemize}
 
 
-PX4 software in the loop (SITL) will be used to simulate the drone. PX4 SITL uses Gazebo to simulate the world, the drone mechanics and the video feed. Pegasus-net-sim, a Network Simulator 3 custom module will be used to simulate the wireless mesh network. Pegasus-net-sim will receive the model info from Gazebo and update the position of its nodes. Each node in pegasus-net-sim will have NS3PegasusApp, a custom NS3 application installed, which will send and receive packets in the simulated network. Pegasus-net-sim will function as a proxy application that will receive data in one UDP port, simulate it in NS3 and transmit it through another UDP socket. Using the trace feature in NS3, pegasus-net-sim will publish the noise and signal value for each node of the wireless mesh network.
+PX4 software in the loop (SITL) is used to simulate the drone. PX4 SITL uses Gazebo to simulate the world, the drone mechanics and the video feed. Pegasus-net-sim, a Network Simulator 3 custom module is used to simulate the wireless mesh network. Pegasus-net-sim receives the model info from Gazebo and update the position of its nodes. Each node in pegasus-net-sim have NS3PegasusApp, a custom ns3 application installed, that sends and receives packets in the simulated network. Pegasus-net-sim functions as a proxy application that receives data in one udp port, simulate it in ns3 and transmit it through another udp socket. Using the trace feature in ns3, pegasus-net-sim publishes the noise and signal value for each node of the wireless mesh network.
 
-Figure~\ref{fig:gcs-components-simulated} and Figure~\ref{fig:drone-components-simulated} illustrates the components used in simulation. 
+Figure~\ref{fig:gcs-components-simulated} and Figure~\ref{fig:drone-components-simulated} illustrate the components used in simulation. 
 
 \begin{figure}
 	\centering
@@ -114,11 +114,11 @@ Figure~\ref{fig:gcs-components-simulated} and Figure~\ref{fig:drone-components-s
 
 \subsubsection{pegasus-net-sim}
 
-Network Simulator 3 is used to simulate wireless mesh network infrastructure. ns3 provides a framework to write simulations that can be integrated with other software. For this study ns3 should be able to:
+Network Simulator 3 is used to simulate wireless mesh network infrastructure. Ns3 provides a framework to write simulations that can be integrated with other software. For this study ns3 has to:
 \begin{itemize}
 	\item Simulate a wireless mesh network with OLSR as the underlying mesh protocol to build the routing table for each node.
 	\item Update the position of the nodes using the pose information from Gazebo. Gazebo library will be used to subscribe to gazebo pose topic.
-	\item Inject and eject real world traffic between GCS and drones to the ns3 simulation. \texttt{pegasus-net-sim} will be designed as a proxy application between the components of the pegasus system to intercept traffic between them.
+	\item Inject and eject real world traffic between GCS and drones to the ns3 simulation. Pegasus-net-sim will be designed as a proxy application between the components of the pegasus system to intercept traffic among them.
 	\item Trace the signal noise value different nodes and publish it using the trace feature of ns3.
 \end{itemize}
 
@@ -145,16 +145,16 @@ The architecture diagram of pegasus-net-sim is given in Figure~\ref{fig:pegasus-
 	\label{fig:pegasus-net-sim-simulation-example}
 \end{figure}
 
-To intercept and route a packet within pegasus-net-sim, it will have:
+To intercept and route a packet within pegasus-net-sim, it has:
 \begin{itemize}
-	\item \textit{port.} The real udp port which will intercept real world traffic.
-	\item \textit{virtual port.} The ns3 virtual port that will simulate port.
-	\item \textit{peer port.} The real udp port which the port will transmit to.
-	\item \textit{virtual peer port.} The ns3 virtual udp port that the traffic will get transmitted to.
+	\item \textit{port}: The real udp port that intercepts real world traffic.
+	\item \textit{virtual port}: The ns3 virtual port that simulates port.
+	\item \textit{peer port}: The real udp port which the port transmits to.
+	\item \textit{virtual peer port}: The ns3 virtual udp port that the traffic gets transmitted to.
 \end{itemize}
 
 
-Port and virtual port will have the exact same port number. For the configuration, three elements are defined in the tuple \{port, peer port, virtual peer port\}. For the scenario given in Figure~\ref{fig:pegasus-net-sim-simulation-example}, the corresponding configuration in PegasusConfig.cc will be:
+The port and virtual port setting is implicitly set to be the same port number. For the configuration, three elements are defined in the tuple \{port, peer port, virtual peer port\}. For the scenario given in Figure~\ref{fig:pegasus-net-sim-simulation-example}, the corresponding configuration in PegasusConfig.cc is:
 
 \begin{verbatim}
 
@@ -190,16 +190,16 @@ The ns3 module pegasus-net-sim traces the signal and noise decibel of each packe
 \section{Functional Components}
 The functional software components of the pegasus system can be categorized as:
 \begin{itemize}
-	\item \textit{Presentation.} This layer defines how the operator interacts with the system. Solely in the GCS.
-	\item \textit{Planning.} This layer will calculate a list of grid based viewpoints and provide path through those viewpoints for the drones in the system, to cover the region of interest selected in the presentation layer. This layer will be in the GCS. 
-	\item \textit{Motion control.} This layer will calculate the drones' local and global map transformations and control the motion of the drones according to path calculated in the planning layer. It will also align the drones in a particular direction at the viewpoints where it needs to capture an image and will request image acquisition service to acquire the image. This layer will be in the GCS as well as the drone.
-	\item \textit{Image acquisition.}  This layer will be present in the GCS and the drone. It will provide service to capture image from the drone, apply GPS tags and deliver it to the GCS over the network. The images acquired will be saved in a local directory of the GCS.
-	\item \textit{Map building.} After the drones have covered their paths, the map building layer will process the images in the local directory of the GCS.
+	\item \textit{Presentation}: This layer defines how the operator interacts with the system. Solely in the GCS.
+	\item \textit{Planning}: This layer will calculate a list of grid based viewpoints and provide path through those viewpoints for the drones in the system, to cover the region of interest selected in the presentation layer. This layer will be in the GCS. 
+	\item \textit{Motion control}: This layer will calculate the drones' local and global map transformations and control the motion of the drones according to path calculated in the planning layer. It will also align the drones in a particular direction at the viewpoints where it needs to capture an image and will request image acquisition service to acquire the image. This layer will be in the GCS as well as the drone.
+	\item \textit{Image acquisition}:  This layer will be present in the GCS and the drone. It will provide service to capture image from the drone, apply GPS tags and deliver it to the GCS over the network. The images acquired will be saved in a local directory of the GCS.
+	\item \textit{Map building}: After the drones have covered their paths, the map building layer will process the images in the local directory of the GCS.
 \end{itemize}
 
 \subsection{Presentation}
 
-This layer presents how an end user will interact with the system. The front-end of the system will utilize a ROS package called mapviz. Mapviz will be used as a plugin inside ROS rqt. The ROS rqt will provide a dashboard for the operator to interact with. The GUI that the operator will be presented with is illustrated in Figure~\ref{fig:mapviz-screenshot}. The presentation layer will run in the GCS.
+This layer presents how an operator interacts with the system. The front-end of the system utilizes a ROS package called mapviz. Mapviz is used as a plugin inside ROS rqt. The ROS rqt provides a dashboard for the operator to interact with. The GUI that the operator is presented with is illustrated in Figure~\ref{fig:mapviz-screenshot}. The presentation layer runs in the GCS.
 
 \begin{figure}
 	\centering
@@ -215,33 +215,35 @@ Mapviz requires the operator to select the global map origin as a ROS parameter.
 
 \begin{verbatim}
 <?xml version="1.0"?>
-<launch>
-<node pkg="swri_transform_util" type="initialize_origin.py"
-name="initialize_origin" >
-<param name="local_xy_frame" value="/pegasus_map"/>
-<param name="local_xy_origin" value="control_station"/>
-<rosparam param="local_xy_origins">
-[{ name: control_station,
-latitude: 14.081104,
-longitude: 100.612743,
-altitude: 7,
-heading: 0.0}]
-</rosparam>
-</node>
-<node name = "pegasus_dashboard" pkg = "rqt_gui" type = "rqt_gui" 
-respawn = "false" output = "screen" args = 
-"--perspective-file $(find pegasus_ros)/pegasus_ros.perspective"/>
+  <launch>
+    <node pkg="swri_transform_util" type="initialize_origin.py"
+      name="initialize_origin" >
+     <param name="local_xy_frame" value="/pegasus_map"/>
+    <param name="local_xy_origin" value="control_station"/>
+    <rosparam param="local_xy_origins">
+      [{ name: control_station,
+         latitude: 14.081104,
+         longitude: 100.612743,
+         altitude: 7,
+         heading: 0.0}]
+    </rosparam>
+  </node>
+  <node name = "pegasus_dashboard" pkg = "rqt_gui" type = "rqt_gui" 
+    respawn = "false" output = "screen" args = 
+    "--perspective-file $(find pegasus_ros)/pegasus_ros.perspective"/>
 </launch>
 \end{verbatim}
 
 
-It will publish two ROS topics:
+It publishes two ROS topics:
 \begin{itemize}
-	\item /local\_xy\_origin: Origin of the global map.
-	\item /mapviz/region\_selected: The points of the polygon as selected by the user.
+	\item \textit{/local\_xy\_origin}: Origin of the global map (pegasus\_map).
+	\item \textit{/mapviz/region\_selected}: The points of the polygon selected by the operator.
 \end{itemize}
 
-The mapviz module can use online map APIs such as google maps and bing maps. For offline use, mapproxy can be used to cache data locally and serve it to mapviz. \textit{https://github.com/danielsnider/MapViz-Tile-Map-Google-Maps-Satellite} provides a docker image for mapproxy that integrates well with mapviz.
+The mapviz module can use online map APIs such as google maps and bing maps. For offline use, mapproxy can be used to cache data locally and serve it to mapviz.
+
+\texttt{https://github.com/danielsnider/MapViz-Tile-Map-Google-Maps-Satellite} provides a docker image for mapproxy that integrates easily with mapviz.
 
 The flow that the operator has to follow while using this GUI is presented in Figure~\ref{fig:presentation-flow}.
 
@@ -277,14 +279,14 @@ The flow that the operator has to follow while using this GUI is presented in Fi
 
 \subsection{Planning}
 
-This layer will compute the path for the drones which will cover the region of interest selected by the operator. It has one component, the pegasus\_planner.
+This layer computes the path for the drones that covers the region of interest selected by the operator. It has one component, the pegasus\_planner.
 
 \subsubsection{Pegasus\_planner}
 
-Pegasus\_planner will handle the following tasks:
+Pegasus\_planner handles the following tasks:
 \begin{itemize}
-	\item \textit{Viewpoint generation. } Generate grid cells based viewpoint in the region of interest.
-	\item \textit{Multi-agent coverage path planning. } A* search to calculate the optimal paths for each drone, such that they avoid collisions and stay within the constraints of the wireless mesh network in the global map frame.
+	\item \textit{Viewpoint generation}: Generate grid cells based viewpoint in the region of interest.
+	\item \textit{Multi-agent coverage path planning}:  A* search to calculate the optimal paths for each drone, such that they avoid collisions and stay within the constraints of the wireless mesh network in the global map frame.
 \end{itemize}
 
 \textbf{Viewpoint Generation}
@@ -529,14 +531,14 @@ The resulting decision list may have trailing states which have the same $h$. Th
 
 \subsection{Motion Control}
 
-This layer handles the control of drones through the ground control station. It will have the components, pegasus\_controller in the GCS, and pegasus\_commander, mavros and PX4 in the drone. A single pegasus\_controller will send requests to each drone's pegasus\_commander. The structure of response and reply messages are illustrated in Figure~\ref{fig:control-messages}. 
-The different control messages that will be received by pegasus\_commander from pegasus\_controller are:
+This layer handles the control of drones through the ground control station. It has the components, pegasus\_controller in the GCS, and pegasus\_commander, mavros and PX4 in the drone. A single pegasus\_controller sends requests to each drone's pegasus\_commander. The structure of response and reply messages are illustrated in Figure~\ref{fig:control-messages}. 
+The different control messages that is received by pegasus\_commander from pegasus\_controller are:
 \begin{itemize}
-	\item \textit{HEART\_BEAT.} Heart beat in regular intervals. This message is the only type to which pegasus\_commander will respond.
-	\item \textit{SET\_OFFBOARD.} Put the flight controller in off-board mode.
-	\item \textit{SET\_RETURN\_TO\_HOME.} Put the flight controller in return mode.
-	\item \textit{SET\_ARM.} Arm the flight controller.
-	\item \textit{GOTO(pose). } Move to drone to pose position.
+	\item \textit{HEART\_BEAT}: Heart beat in regular intervals. This message is the only type to which pegasus\_commander responds.
+	\item \textit{SET\_OFFBOARD}: Put the flight controller in off-board mode.
+	\item \textit{SET\_RETURN\_TO\_HOME}: Put the flight controller in return mode.
+	\item \textit{SET\_ARM}: Arm the flight controller.
+	\item \textit{GOTO(pose)}: Move to drone to pose position.
 \end{itemize}
 
 \begin{figure}
@@ -553,18 +555,18 @@ The different control messages that will be received by pegasus\_commander from 
 	\label{fig:control-messages}
 \end{figure}
 
-HEART\_BEAT will have command id 0. SET\_OFFBOARD, SET\_RETURN\_TO\_HOME, SET\_ARM, and GOTO will have incremental id. That is for every new command, the id will increment by one. HEART\_BEAT reply will have the last command id received by pegasus\_commander and the status of its execution. Last command status is set to true when the command has been executed. Figure~\ref{fig:communitation-controller-commander} illustrates the communication between one pegasus\_controller and two pegasus\_commander.
+HEART\_BEAT has command id 0. SET\_OFFBOARD, SET\_RETURN\_TO\_HOME, SET\_ARM, and GOTO have incremental id. That is for every new command, the id is incremented by one. HEART\_BEAT reply has the last command id received by pegasus\_commander and the status of its execution. Last command status is set to true when the command has been executed. Figure~\ref{fig:communitation-controller-commander} illustrates the communication between one pegasus\_controller and two pegasus\_commander.
 
 \begin{figure}
 	\centering
-	\caption[Communication between \texttt{pegasus\_controller} and two \texttt{pegasus\_commander}.]{\small GOTO command communication diagram between \texttt{pegasus\_controller} and two \texttt{pegasus\_commander}.}
+	\caption[Communication between \texttt{pegasus\_controller} and two \texttt{pegasus\_commander}.]{\small GOTO command communication diagram between \texttt{pegasus\_controller} and two \texttt{pegasus\_commanders}.}
 	\includegraphics[width=5in]{figures/methodology/methodology-commander-controller-communication}
 	\label{fig:communitation-controller-commander}
 \end{figure}
 
 \subsubsection{Pegasus\_controller}
 
-Pegasus\_controller will be responsible for:
+Pegasus\_controller is responsible for:
 \begin{itemize}
 	\item Calculating and maintaining the transformations between the local map frames of each drone and the global map frame.
 	\item Coordinating and sending control messages to the drones.
@@ -580,7 +582,7 @@ Pegasus\_controller will be responsible for:
 	\label{fig:pegasus-controller}
 \end{figure}
 
-The architecture diagram of pegasus\_controller is given in Figure~\ref{fig:pegasus-controller}.
+The architecture of pegasus\_controller is given in Figure~\ref{fig:pegasus-controller}.
 \begin{figure}
 	\centering
 	\caption[State diagram of \texttt{pegasus\_controller}.]{\small State diagram of \texttt{pegasus\_controller}.}
@@ -590,20 +592,20 @@ The architecture diagram of pegasus\_controller is given in Figure~\ref{fig:pega
 
 The state diagram in Figure~\ref{fig:controller-state-diagram} can be further elaborated as follows:
 \begin{itemize}
-	\item \textit{IDLE.} It will not do anything.
-	\item \textit{PLAN.} Call services provided by pegasus\_planner. 
-	\item \textit{PREP.} Prepare the drone to enter offboard mode.
-	\item \textit{OFFBOARD\_MODE.} It will send SET\_OFFBOARD control message to the drones and wait for confirmation.
-	\item \textit{ARMING.} It will send SET\_ARM control message to the drones and wait for confirmation.
-	\item \textit{TAKE\_OFF.} It will takeoff drones to operational height.
-	\item \textit{CALIBRATE.} It will send the calibration path to the drones and coordinate the flight of the drone along the calibration path and capture the corresponding local poses and global GPS positions for calculation the map transformations.
-	\item \textit{GENERATE\_TRANSFORMS.} It will generate the transforms between the local map frame of each drone and the global map frame using the corresponding points collected in CALIBRATE state.
-	\item \textit{PRE\_RUN.} Move the drones to starting position.
-	\item \textit{RUN.} It will execute path of the drones in a coordinated manner.
-	\item \textit{COMPLETE.} It will reach this state when the system's execution is complete. Set the drone to Return mode by sending SET\_RETURN\_TO\_HOME control message.
+	\item \textit{IDLE}: Do nothing.
+	\item \textit{PLAN}: Call services provided by pegasus\_planner. 
+	\item \textit{PREP}: Prepare the drone to enter off-board mode.
+	\item \textit{OFFBOARD\_MODE}: Send SET\_OFFBOARD control message to the drones and wait for confirmation.
+	\item \textit{ARMING}: Send SET\_ARM control message to the drones and wait for confirmation.
+	\item \textit{TAKE\_OFF}: Takeoff to operational height.
+	\item \textit{CALIBRATE}: Send the calibration path to the drones and coordinate the flight of the drone along the calibration path and capture the corresponding local poses and global GPS positions for calculation the map transformations.
+	\item \textit{GENERATE\_TRANSFORMS}: Generate transforms between the local map frame of each drone and the global map frame using the corresponding points collected in CALIBRATE state.
+	\item \textit{PRE\_RUN}: Move the drones to their starting positions.
+	\item \textit{RUN}: Execute path of the drones in a coordinated manner.
+	\item \textit{COMPLETE}: It will reach this state when the system's execution is complete. Set the drone to Return mode by sending SET\_RETURN\_TO\_HOME control message.
 \end{itemize}
 
-The drone will takeoff in its home position. After it reaches its operational height, it will follow a predefined routine from CALIBRATE state to PRE\_RUN state as shown in Figure~\ref{fig:calibration-routine}.  All the drones will be positioned at the origin of the global map (pegasus\_map) at different altitudes in PRE\_RUN state. For a mission with operational height $z_o$ and $n$ drones, the $i^{th}$ drone, were $0 <= i < n$ will have $z = z_o + i * 2$ meters altitude in PRE\_RUN state. 
+The drone takes off in its home position. After it reaches its operational height, it follows a predefined routine from CALIBRATE state to PRE\_RUN state as shown in Figure~\ref{fig:calibration-routine}.  All the drones are positioned at the origin of the global map (pegasus\_map) at different altitudes in PRE\_RUN state. For a mission with operational height $z_o$ and $n$ drones, the $i^{th}$ drone, were $0 <= i < n$ has $z = z_o + 2\cdot i$ meters altitude in PRE\_RUN state. 
 
 \begin{figure}
 	\centering
@@ -612,18 +614,18 @@ The drone will takeoff in its home position. After it reaches its operational he
 	\label{fig:calibration-routine}
 \end{figure}
 
-In GENERATE\_TRANSFORM state , algorithm~\ref{alg:find-transforms} will be used to find transforms between local map of each drone and the global map. The problem of finding transforms between all the local and global maps can be done with planar homography because the z axis of all the maps are parallel and pointing upwards.
+In GENERATE\_TRANSFORM state , algorithm~\ref{alg:find-transforms} is used to find transforms between local map of each drone and the global map. The problem of finding transforms between all the local and global maps can be done with planar homography because the z axis of all the maps are parallel and pointing upwards.
 
-In RUN state,pegasus\_commander will be configurable to allow two types of movement:
+In RUN state,pegasus\_commander is configurable to allow two types of movement:
 \begin{itemize}
-	\item \textit{Towards.} The drones will face toward the direction it is moving. During image acquisition the drones will orient itself by setting their yaw to 0\degree as shown in Figure~\ref{fig:towards-movement}.
-	\item \textit{Strafe.} The drones will always have its yaw at 0\degree. They will move sideways to the next viewpoint. This movement requires less time when the viewpoints are separated by small distances. Figure~\ref{fig:strafe-movement} shows this movement.
+	\item \textit{Towards}: The drones will face toward the direction they are moving. During image acquisition the drones orients themselves by setting their yaw to 0\degree, as shown in Figure~\ref{fig:towards-movement}.
+	\item \textit{Strafe}: The drones will always have their yaw at 0\degree. They move sideways to the next viewpoint. This movement requires less time when the viewpoints are separated by small distances. Figure~\ref{fig:strafe-movement} shows this movement.
 \end{itemize}
 
 \begin{figure}
 	\centering
 	\caption[Movement types for drones.]{\small 
-		Drones will be able to be configured to follow either (a) Towards movement, or  (b) Strafe movement. Towards movement takes more time than strafe movement because it has to know whether it has reached the destination pose in step 5, and if it has properly aligned to take image in step 6. In strafe movement the drone is already aligned to take image and it just needs to know wheather it has reached the destination pose in step 4. }
+		Drones can be configured to follow either (a) Towards movement, or (b) Strafe movement. Towards movement takes more time than strafe movement because it has to know whether it has reached the destination pose in step 5, and if it has properly aligned to take image in step 6. In strafe movement the drone is already aligned to take image and it just needs to know wheather it has reached the destination pose in step 4.}
 	\subfloat[]{%
 		\includegraphics[width=5in]{figures/methodology/methodology-towards-movement}%
 		\label{fig:towards-movement}
@@ -637,13 +639,13 @@ In RUN state,pegasus\_commander will be configurable to allow two types of movem
 	\label{fig:movement-types}
 \end{figure}
 
-Image acquisition will be skipped if the drone has already visited the viewpoint to avoid duplicate images.
+Image acquisition is skipped if the drone has already visited the viewpoint to avoid duplicate images.
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \renewcommand{\algorithmicforall}{\textbf{for each}}
 \begin{algorithm}
-	\caption{Find Local To Global Transformation}
+	\caption{Find Local To Global Transformation.}
 	\label{alg:find-transforms}
 	\begin{algorithmic}
 		\REQUIRE $L$: set of all corresponding local poses
@@ -662,16 +664,15 @@ Image acquisition will be skipped if the drone has already visited the viewpoint
 		0 & 0 & 1 & 0 \\
 		0 & 0 & 0 & 1
 		\end{bmatrix}$
-		
 	\end{algorithmic}
 \end{algorithm}
 
-In COMPLETE state, the drones will return to their home position following the behavior defined in PX4 firmware. PX4 firmware ascends the drone to a safe altitude before returning them to home. To avoid collision, the drones' safe altitude should be set different from each other.
+In COMPLETE state, the drones returns to their home position following the behavior defined in PX4 firmware. PX4 firmware ascends the drone to a safe altitude before returning them to home. To avoid collision, the drones' safe altitude should be set different from each other.
 
 \subsubsection{Pegasus\_commander} \label{section:pegasus-commander}
 
-Pegasus\_commander is a new ROS node, customized for this study that will use the topics and services provided by mavros to control the drone in off-board mode. It will receive control messages from the pegasus\_controller. It will also monitor the link between GCS and the drone, and if a HEART\_BEAT control message is not received for a particular duration, then the flight controller will be set to Return mode. The architecture diagram of this module is shown in Figure~\ref{fig:pegasus-commander}.
-It will only respond to HEART\_BEAT control message with:
+Pegasus\_commander is a new ROS node customized for this study that uses the topics and services provided by mavros to control the drone in off-board mode. It receives control messages from the pegasus\_controller. It also monitors the link between the GCS and the drone, and if a HEART\_BEAT control message is not received for a particular duration, then the flight controller will be set to return mode. The architecture of this module is shown in Figure~\ref{fig:pegasus-commander}.
+It responds to HEART\_BEAT control messages with:
 \begin{itemize}
 	\item The last command id it received and the status of the command,
 	\item State of mavros,
@@ -679,7 +680,7 @@ It will only respond to HEART\_BEAT control message with:
 	\item GPS coordinates of the drone.
 \end{itemize}
 
-For SET\_ARM, SET\_OFFBOARD and SET\_RETURN\_TO\_HOME it calls the relevant mavros services. For GOTO, it publishes the pose it received to mavros until it reaches the desired pose. Algorithem ~\ref{alg:is-at-position} will be used to determine if the drone has reached the desired pose.
+For SET\_ARM, SET\_OFFBOARD and SET\_RETURN\_TO\_HOME it calls the relevant mavros services. For GOTO, it publishes the pose it received to mavros until it reaches the desired pose. Algorithm ~\ref{alg:is-at-position} is used to determine if the drone has reached the desired pose.
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -709,9 +710,9 @@ For SET\_ARM, SET\_OFFBOARD and SET\_RETURN\_TO\_HOME it calls the relevant mavr
 \end{figure}
 
 \subsubsection{PX4}
-The drone runs PX4 Firmware on the flight controller. The flight controller's movement and altitude can be controlled in Offboard mode through the MAVlink protocol. This mode supports only a very limited set of MAVLink commands.
+The drone runs PX4 Firmware on the flight controller. The flight controller's movement and altitude can be controlled in off-board mode through the MAVlink protocol. This mode supports only a very limited set of MAVLink commands.
 
-MAVLink commands supported in Offboard modes are:
+MAVLink commands supported in off-board modes are:
 \begin{itemize}
 	\item SET\_POSITION\_TARGET\_LOCAL\_NED: Control vehicle position.
 	\item SET\_ATTITUDE\_TARGET: Control vehicle altitude and orientation.
@@ -721,22 +722,22 @@ PX4 supports the coordinate frames (coordinate\_frame field): MAV\_FRAME\_LOCAL\
 
 A stream of setpoint commands must be received by the vehicle prior to engaging the mode, and in order to remain in the mode (if the message rate falls below 2Hz the vehicle will stop). In order to hold position while in this mode, the vehicle must receive a stream of setpoints for the current position.
 
-Offboard mode requires an active connection to a remote MAVLink system (e.g. companion computer or GCS). If the connection is lost, after a timeout (COM\_OF\_LOSS\_T) the vehicle will attempt to land or perform some other failsafe action. The action is defined in the parameters COM\_OBL\_ACT and COM\_OBL\_RC\_ACT which can be set through mavros' mavparam.
+Off-board mode requires an active connection to a remote MAVLink system (e.g. companion computer or GCS). If the connection is lost, after a timeout (COM\_OF\_LOSS\_T) the vehicle will attempt to land or perform some other failsafe action. The action is defined in the parameters COM\_OBL\_ACT and COM\_OBL\_RC\_ACT which can be set through mavros' mavparam.
 
 \subsubsection{Mavros}
 
 Mavros is a ROS node that provides ROS interfaces for communication with various autopilots with MAVLink communication protocol.
 The ROS services provided by Mavros,  of interest for this system are:
 \begin{itemize}
-	\item \textit{mavros/set\_mode.} Required to set mode of the flight controller to off-board mode and return to launch mode.
-	\item \textit{mavros/cmd/arming.} Required to arm the flight controller.
+	\item \textit{mavros/set\_mode}: Required to set mode of the flight controller to off-board mode and return to launch mode.
+	\item \textit{mavros/cmd/arming}: Required to arm the flight controller.
 \end{itemize}
 
-The ROS topics published by Mavros, useful for this system are:
+The ROS topics published by Mavros that are useful for this system are:
 \begin{itemize}
-	\item \textit{mavros/state.} Publishes the state of the flight controller.
-	\item \textit{mavros/local\_position/pose.} Publishes pose, i.e. position and orientation of the flight controller in the local frame. Mavros handles the translation between NED and ENU conventions.
-	\item \textit{mavros/global\_position/global.} Publishes the GPS coordinates, i.e. latitude, longitude and altitude of the flight controller.
+	\item \textit{mavros/state}: Publishes the state of the flight controller.
+	\item \textit{mavros/local\_position/pose}: Publishes pose, i.e., position and orientation of the flight controller in the local frame. Mavros handles the translation between NED and ENU conventions.
+	\item \textit{mavros/global\_position/global}: Publishes the GPS coordinates, i.e., latitude, longitude and altitude of the flight controller.
 \end{itemize}
 
 The ROS topics subscribed by Mavros, that this system will use are:
@@ -747,7 +748,7 @@ The ROS topics subscribed by Mavros, that this system will use are:
 
 \subsection{Image Acquisition}
 
-This layer provides image acquisition service. The GCS will be able to request geo-tagged image from the drone in flight, using image acquisition service. The software components in this layer are gscam and pegasus\_image\_publisher in the drones and pegasus\_image\_subscriber in the GCS. The gscam ROS node is used to publish camera video feed as ROS camera topic using gstreamer. Mavros is used to acquire GPS location of the image captured. The pegasus\_image\_subscriber will provide a ROS service in the GCS which is called by pegasus\_controller to acquire images at the viewpoints. The pegasus\_image\_subscriber will be a udp client that requests image from the pegasus\_image\_publisher udp server in the drone. For multiple drones there will be multiple pegasus\_image\_subscriber running under different ROS namespace in the GCS. The subscriber and the publisher will transfer data with each other using the packet as shown in Figure~\ref{fig:image-packet}.
+This layer provides image acquisition service. The GCS is able to request geo-tagged image from the drone in flight, using image acquisition service. The software components in this layer are gscam and pegasus\_image\_publisher in the drones and pegasus\_image\_subscriber in the GCS. The gscam ROS node is used to publish camera video feed as ROS camera topic using gstreamer. Mavros is used to acquire GPS location of the image captured. The pegasus\_image\_subscriber provides a ROS service in the GCS which is called by pegasus\_controller to acquire images at the viewpoints. The pegasus\_image\_subscriber is a udp client that requests image from the pegasus\_image\_publisher udp server in the drone. For multiple drones there are multiple pegasus\_image\_subscriber running under different ROS namespace in the GCS. The subscriber and the publisher transfers data with each other using the packet as shown in Figure~\ref{fig:image-packet}.
 
 \begin{figure}
 	\centering
@@ -756,12 +757,12 @@ This layer provides image acquisition service. The GCS will be able to request g
 	\includegraphics[width=3in]{figures/methodology/methodology-Image-packet}
 \end{figure}
 
-The same packet structure will be used by both the subscriber and publisher, however the commands are different for each:
+The same packet structure is used by both the subscriber and publisher, however the commands are different:
 \begin{itemize}
-	\item \textit{REQUEST.} This request will be sent from subscriber to the publisher. The publisher will drop the previous buffer, capture a new image, add GPS tag to it, segment the image into multiple packets and store in buffer.
-	\item \textit{REPLY.} The publisher will respond to the subscriber for the REQUEST packet. It will have the total packets in the buffer for the image requested.
-	\item \textit{PKT.} The subscriber will request image packets from the publisher using the packet number it wants. It will request the same packet number until it receives the packet and then increment the packet number. The publisher will fill the data section with the image data and reply. The request will be made till the packet number reaches the total packets received in REPLY.
-	\item \textit{ERR.} If the publisher cannot find the packet number the subscriber is requesting for, it will respond with ERR message.
+	\item \textit{REQUEST}: REQUEST is sent from subscriber to the publisher. The publisher drops the previous buffer, captures a new image, adds GPS tag to it, segments the image into multiple packets and stores the data in buffer.
+	\item \textit{REPLY}: The publisher responds to the subscriber's REQUEST packet. REPLY has the total packets in the buffer for the image requested.
+	\item \textit{PKT}: The subscriber sends PKT request for image data from the publisher using the packet number it wants. It requests the same packet number until it receives the packet and then increments the packet number. The publisher fills the data section with the image data and replies with the PKT message. The request is made till the packet number reaches the total packets received in REPLY.
+	\item \textit{ERR}: If the publisher cannot find the packet number the subscriber is requesting for, it responds with ERR message.
 \end{itemize}
 
 The communication diagram is illustrated in Figure~\ref{fig:image-communication-diagram}.
@@ -776,21 +777,21 @@ The communication diagram is illustrated in Figure~\ref{fig:image-communication-
 
 \subsubsection{Pegasus\_image\_publisher}
 
-The gscam ROS node will provide the USB camera video feed as ROS topic. The pegasus\_image\_publisher node will subscribe to the ROS camera topic and GPS topic published by mavros. When it receives a REQUEST message from the pegasus\_image\_subscriber, it will get the current video frame and gps data, and store GPS data using Exchangeable Image File (EXIF) format. It will store the geo-tagged image in buffer till a new REQUEST message is received. It will provide image data to the subscriber from the current buffer.
+The gscam ROS node provides the USB camera video feed as a ROS topic. The pegasus\_image\_publisher node subscribes to the ROS camera topic and GPS topic published by mavros. When it receives a REQUEST message from the pegasus\_image\_subscriber, it gets the current video frame and gps data, and stores GPS data using Exchangeable Image File (EXIF) format. It stores the geo-tagged image in buffer till a new REQUEST message is received. It provides image data to the subscriber from the current buffer.
 
 
 \subsubsection{Pegasus\_image\_subscriber}
 
-The pegasus\_image\_subscriber will provide image acquisition service to the GCS. It will expose ROS service \textit{/[drone\_namespace]/grab\_image}. For multiple drones there should be multiple pegasus\_image\_subscriber running under different ROS namespace in the GCS. It will receive the image and store it in the local directory under the name \textit{[drone-namespace]-i.jpeg}. Where \textit{i} is the image number.
+The pegasus\_image\_subscriber provides image acquisition service to the GCS. It exposes ROS service \texttt{/[drone\_namespace]/grab\_image}. For multiple drones there should be multiple pegasus\_image\_subscriber running under different ROS namespace in the GCS. It receives the image and store it in the local directory under the name \texttt{[drone-namespace]-i.jpeg}, where \texttt{i} is the image number.
 
 \subsection{Map Building}
-This layer will build the map from the images captured during the mission. This will be run after the drones have finished their mission. This layer has two components, pegasus\_image\_rectify and WebODM.
+This layer builds the map from the images captured during the mission. This is run after the drones have finished their mission. This layer has two components, pegasus\_image\_rectify and WebODM.
 
 \subsubsection{Pegasus\_image\_rectify}
-Pegasus\_image\_rectify will use the camera calibration file generated by camera\_calibration node available in image\_pipeline ROS package to rectify the images received from the drones. The images capture from the drones will follow the naming convention of \textit{[drone-namespace]-i.jpeg}. The pegasus\_image\_rectify will only process the images for the associated camera calibration file by identifying the images using the drone-namespace. It will also provide a feature to select region of interest to crop the image received from the drones. The rectified images are saved with the same filename in another output directory in the GCS.
+Pegasus\_image\_rectify uses the camera calibration file generated by camera\_calibration node available in image\_pipeline ROS package to rectify the images received from the drones. The images capture from the drones follows the naming convention of \texttt{[drone-namespace]-i.jpeg}. The pegasus\_image\_rectify processes the images for the associated camera calibration file by identifying the images using the drone-namespace. It also provides a feature to select region of interest to crop the images received from the drones. The rectified images are saved with the same filename in another output directory in the GCS.
 
 \subsubsection{WebODM}
-WebODM provides a web based GUI to use Open Drone Map (ODM). The operator will upload the rectified images to WebODM and generate orthographic map, and 3D point cloud among other features provides by ODM.
+WebODM provides a web based GUI to use Open Drone Map (ODM). The operator uploads the rectified images to WebODM and generate orthophoto, 3D point cloud, and textured mesh among other features provides by ODM.
 \begin{figure}
 	\centering
 	\caption[WebODM]{\small WebODM application for generating map from images.} 
@@ -799,34 +800,34 @@ WebODM provides a web based GUI to use Open Drone Map (ODM). The operator will u
 \end{figure}
 
 \subsection{Pegasus\_fov}
-Pegasus\_fov will be a helper node to assist the operator in selecting a good grid size for the viewpoints. It will calculate the area covered by an image given the operational height of the drone and the camera calibration file. Camera calibration file has:
+Pegasus\_fov is a helper node to assist the operator in selecting a good grid size for the viewpoints. It calculates the area covered by an image given the operational height of the drone and the camera calibration file. The camera calibration file has the following fields:
 
 \begin{itemize}
-	\item $w$. Image width.
-	\item $h$. Image height.
-	\item $K$. Camera matrix, where 
+	\item $w$: Image width.
+	\item $h$: Image height.
+	\item $K$: Camera matrix, where 
 	$$K = \begin{bmatrix}
 	f_x && s   && x_0 \\
 	0   && f_y && y_0 \\
 	0   && 0   && 1
-	\end{bmatrix}$$
+	\end{bmatrix}.$$
 \end{itemize}
 
-$f_x$ and $f_y$ are $x$ and $y$ focal length. $x_0$ and $y_0$ are principal point offset. $s$ is the axis skew.
+$f_x$ and $f_y$ are $x$ and $y$ focal length. $(x_0, y_0)$ is the principal point offset. $s$ is the axis skew.
 
-To find the angle of view,
+To find the field of view angles,
 $$ \theta_x = 2 \times \tan^{-1}(\frac{w}{2 \times f_x}) $$
 
-$$ \theta_y = 2 \times \tan^{-1}(\frac{h}{2 \times f_y}) $$
+$$ \theta_y = 2 \times \tan^{-1}(\frac{h}{2 \times f_y}).$$
 
 From $\theta_x$ and $\theta_y$, the area of coverage per viewpoint from altitute $z$ can be calculated.
 
 $$ x = 2 \times \tan(\frac{\theta_x}{2}) \times z $$
 $$ y = 2 \times \tan(\frac{\theta_y}{2}) \times z $$ 
 
-$(x, y)$ will be the area captured by the camera at altitude $z$. The operator can use this information to choose the size of the grids in path planning.
+$(x, y)$ is the area captured by the camera at altitude $z$. The operator can use this information to choose the size of the grids in path planning.
 
-This node will be accessible using rosrun with parameters \_camera\_file and \_height as follows:
+This node is accessible using rosrun with parameters \_camera\_file and \_height as follows:
 
 \begin{verbatim}
 $ rosrun pegasus_uav_ros pegasus_fov.py 

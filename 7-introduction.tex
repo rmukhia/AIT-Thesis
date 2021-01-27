@@ -1,5 +1,5 @@
 % set 0.5 inch indentation
-\setlength{\parindent}{0.5in} 
+\setlength{\parindent}{0pt} 
 % set paragraph space = 0 space
 \setlength{\parskip}{0mm}
 % set line space 1.5
@@ -19,7 +19,7 @@ This study proposes a system for command and control of a cluster of autonomous 
 
 \section{Statement of the Problem}
 
-An inexpensive cluster of UAVs providing autonomous coordinated aerial mapping after a disaster can be a valuable asset for disaster observation and public safety that does not pose any risks for ground-based surveillance personnel. Multiple drones will reduce flight time and increase the spatial extent of the SfM result. A wireless mesh network can also be an inexpensive solution when communication infrastructure such as cellular data services are dysfunctional. Increasing the number of drones in the system can enable increased range of the mesh network, because each drone acts as a mesh node. Providing emergency network services using UAVs and mesh networks in disaster-stricken areas is an active research area, as discussed by \shortciteA{dronewirelessmeshnetworkchand}, but the best method to combine coverage for mapping while maintaining mesh connectivity is an open problem. \shortciteA{Sabino_2018} discuss optimal placement of UAVs in a mesh network, and separately, a survey of the multi-agent coverage path planning problem (CPP) by \shortciteA{Randa2019} reviews many CPP methods proposed in the literature. However, the requirement for mesh network connectivity imposes severe constraint on the movement of agents, making the resulting "constrained CPP" an open research area.
+An inexpensive cluster of UAVs providing autonomous coordinated aerial mapping after a disaster can be a valuable asset for disaster observation and public safety that does not pose any risks for ground-based surveillance personnel. Multiple drones will reduce flight time and increase the spatial extent of the SfM result. A wireless mesh network can also be an inexpensive solution when communication infrastructure such as cellular data services are dysfunctional. Increasing the number of drones in the system can enable increased range of the mesh network, because each drone acts as a mesh node. Providing emergency network services using UAVs and mesh networks in disaster-stricken areas is an active research area, as discussed by \shortciteA{Chand2018}, but the best method to combine coverage for mapping while maintaining mesh connectivity is an open problem. \shortciteA{Sabino2018} discuss optimal placement of UAVs in a mesh network, and separately, a survey of the multi-agent coverage path planning problem (CPP) by \shortciteA{Almadhoun2019} reviews many CPP methods proposed in the literature. However, the requirement for mesh network connectivity imposes severe constraint on the movement of agents, making the resulting "constrained CPP" an open research area.
 
 Simulation environments exist that can be used for multi-drone planning and wireless mesh networks. Pixhawk PX4's software in the loop (SITL) along with Gazebo can simulate a physical fleet of UAVs with cameras. Wireless mesh networks can be simulated by Network Simulator 3 (NS3). The Robot Operating System (ROS), with its range of tools and available packages, provides a strong platform to develop this system. FlySimNet by \shortciteA{Baidya2018} is a UAV network simulator created by combining NS3 and Ardupilot's UAV SITL simulator with lightweight publish/subscribe (ZMQ) based middleware. It uses a custom graphical ground control system (GCS) application that communicates via the ZMQ messaging service, which does not support ROS, and cameras are not supported by Ardupilot SITL. The CORNET middleware framework by \shortciteA{AcharyaRBCCPS} combines Gazebo, NS3 and PX4, but it is available only as a published paper and implementation of their method is not quite clear. Neither of these frameworks implement wireless mesh network simulation on NS3. Gazebo, NS3, PX4, and ROS together provide an open source platform, but integration of these tools is required.
 
@@ -50,23 +50,25 @@ The main objective of this thesis is to improve on the state of the art in mappi
 
 The study will not cover the following.
 \begin{itemize}
-	\item Obstacle detection and avoidance: The control station will generate paths for the drones, such that they will not collide with each other. It is assumed that no unknown obstacle will be present at the drone's operational altitude. It is the operator's responsibility to indicate the minimum altitude during mapping.
+	\item \textit{Obstacle detection and avoidance}: The control station will generate paths for the drones, such that they will not collide with each other. It is assumed that no unknown obstacle will be present at the drone's operational altitude. It is the operator's responsibility to indicate the minimum altitude during mapping.
 	
-	\item Dynamic path reconfiguration: The control station will generate complete paths for the drones before the start of the mission.
+	\item \textit{Dynamic path reconfiguration}: The control station will generate complete paths for the drones before the start of the mission.
 	
-	\item Recovery mechanism: If communication is lost with any drone, it will return to the home position using the default behavior in PX4. The remaining drones will continue their operation.
+	\item \textit{Recovery mechanism}: If communication is lost with any drone, it will return to the home position using the default behavior in PX4. The remaining drones will continue their operation.
 	
-	\item Global Positioning System failure: It is assumed that GPS will be continuously functional.
+	\item \textit{Global Positioning System failure}: It is assumed that GPS will be continuously functional.
+	
+	\item \textit{Number of drones in evaluation}: The simulation environment have been tested with a maximum of three drones, real world validation uses only one drone.
 \end{itemize}
 
 \section{Organization of the Thesis}
 
-I organize the rest of this thesis as follows.
+The thesis is organized as follows:
 \begin{itemize}
-	\item In Chapter \ref{ch:literature-review}, I provide a literature review.
-	\item In Chapter \ref{ch:methodology}, I propose my methodology.
-	\item In Chapter \ref{ch:results}, I present experimental results.
-	\item Finally, in Chapter \ref{ch:conclusion}, I conclude my thesis and provide recommendation for future work.
+	\item Chapter \ref{ch:literature-review} provides a literature review related to this study.
+	\item Chapter \ref{ch:methodology} proposes the methodology for the system developed in this study.
+	\item Chapter \ref{ch:results} presents experimental results using the system developed in this study.
+	\item Finally, chapter \ref{ch:conclusion} concludes the thesis and provides recommendation for future work.
 \end{itemize}
 
 \FloatBarrier

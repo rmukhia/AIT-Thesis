@@ -1,5 +1,6 @@
 % set 0.5 inch indentation
-\setlength{\parindent}{0.5in} 
+%\setlength{\parindent}{0.5in}
+\setlength{\parindent}{0pt} 
 % set paragraph space = 0 space
 \setlength{\parskip}{0mm}
 % set line space 1.5
@@ -8,33 +9,33 @@
 \chapter{CONCLUSION}
 \label{ch:conclusion}
 
-I conclude my thesis in this chapter and provide recommendations for future work.
+The thesis study is concluded in this chapter and recommendations for future work is provided. The system is able to run in simulation with multiple drones and it has been evaluated in the real world with one drone. 
 
 \section{Conclusion}
-I propose a system to autonomously survey a region of interest using multiple drones connected to a wireless mesh network using a ground control station to coordinate their movements in my thesis study. Furthermore, the system is capable of acquiring geo-tagged images from the drones in real time, which can be used after the mission is complete to build a 3D model and orthophoto image of the region of interest. One of the use cases of the pegasus system is to survey an area after a disaster using multiple drones autonomously. Multiple drones can survey a region of interest in a shorter amount of time than a single drone. Thus, cost effective drones can be used despite the constraints of short battery life.
+I propose a system to autonomously survey a region of interest using multiple drones connected to a wireless mesh network using a ground control station to coordinate their movements in my thesis study. Furthermore, the system is capable of acquiring geo-tagged images from the drones in real time, which can be used after the mission is complete to build a 3D model and orthophoto image of the region of interest. One of the use cases of the Pegasus system is to survey an area after a disaster using multiple drones autonomously. Multiple drones can survey a region of interest in a shorter amount of time than a single drone. Thus, cost effective drones can be used despite the constraints of short battery life.
 
-The system provides the operator with an interface to select the area of interest to survey. Viewpoints are generated in the area of interest. An iterative A* search algorithm is used find an efficient path for the drones to cover the viewpoints without losing the mesh network coverage or colliding with each other. Since the problem of finding the optimal paths for the drones to cover all the viewpoints is NP-hard, the A* algorithm is tweaked to provide reasonable solutions in a reasonable amount of time. This forms the planning facet of the system.
+The system provides the operator with an interface to select the area of interest to survey. Viewpoints are generated in the area of interest. An iterative A* search algorithm is used find an efficient path for the drones to cover the viewpoints without losing mesh network coverage or colliding with each other. Since the problem of finding the optimal paths for the drones to cover all the viewpoints is NP-hard, the A* algorithm is tweaked to provide reasonable solutions in a reasonable amount of time. This forms the planning facet of the system.
 
-The drones are controlled in real time by a centralized ground control station connected to the mesh network. Each of the drones and the GCS are operating in a different local frame of reference. The system finds the transformation between all the local frame of reference and the global frame of reference through a predefined calibration routine that is run before the system starts following the planned paths. Then each drone operates in its local map while following planned paths calculated in the global map. The GCS instructs each drone to go to a desired location with a desired orientation. If the drone loses communication with the GCS, the drone returns to its home position autonomously. This forms the motion control aspect of the system.
+The drones are controlled in real time by a centralized ground control station connected to the mesh network. Each of the drones and the GCS operate in different local frames of reference. The system finds the transformation between all local frames of reference and the global frame of reference through a predefined calibration routine that is run before the drones start following their planned paths. Then each drone operates within its local map while following planned paths calculated in the global map. The GCS instructs each drone to go to a desired location with a desired orientation. If the drone loses communication with the GCS, the drone returns to its home position autonomously. This forms the motion control aspect of the system.
 
 The GCS acquires geo-tagged images from the drones in real time using the mesh network. This forms the image acquisition part of the system. 
-Finally, the images acquired during the mission from the drone is rectified and processed with WebODM. This is the map building part of the system.
+Finally, the images acquired during the mission from the drone are rectified and processed with WebODM. This is the map-building part of the system.
 
-The system was tested through simulation with popular simulation tools. PX4 SITL, gazebo and ns-3 were integrated and used together to simulate the working of the system with three drones. Simulation showed that the system will work with multiple drones. It also showed that the traffic generated by the system between the drones and the GCS is only a few megabytes, mostly for image acquisition. 
+The system was tested through simulation with popular simulation tools. PX4 SITL, Gazebo and ns-3 were integrated and used together to simulate the working of the system with three drones. Simulation showed that the system will work with multiple drones. It also showed that the traffic generated by the system between the drones and the GCS is only a few megabytes, mostly for image acquisition. 
 
-The system was also tested using one real drone. The system was able to control the motion of the drone in real time, plan a path for the area of interest, and acquire images from the viewpoints during flight. The acquired images were used to build a 3D model, a textured mesh and an orthophoto of the area the the system surveyed autonomously. 
+The system was also tested in the real world using one real drone. The system was able to control the motion of the drone in real time, plan a path for the area of interest, and acquire images from the planned viewpoints during flight. The acquired images were used to build a 3D model, a textured mesh, and an orthophoto of the area the system surveyed autonomously. 
 
-
+The source code for the developed system is available at the Github repository \\  \url{https://github.com/rmukhia/pegasus}.
 \section{Recommendations}
 
-The system is unsafe, that is, it does not have obstacle avoidance and dynamic path adjustment. It also does not have fail-safe mechanisms for fatal conditions such as low battery in the drone. If the battery becomes low enough, the drone will simply fall to the ground from whatever altitude it is at. The system can be made more safe in by integrating sensors in the drones to avoid surrounding obstacles. The system can also be extended to include real-time monitoring of the battery level of the drones to execute fail-safe behavior if the battery level falls below a particular threshold.
+The system is unsafe, that is, it does not have obstacle avoidance and dynamic path adjustment. It also does not have fail-safe mechanisms for fatal conditions such as low battery in the drone. If the battery becomes low enough, the drone will simply fall to the ground from whatever altitude it is at. The system can be made more safe by integrating sensors in the drones to avoid surrounding obstacles. The system can also be extended to include real-time monitoring of the battery level of the drones to execute fail-safe behavior if the battery level falls below a particular threshold.
 
-The system is complicated to set up. There are many ROS nodes and launch files required to execute the system. Further work can be done to make the system easier to access.
+Currently, the system is complicated to set up. There are many ROS nodes and launch files required to execute the system. Further work can be done to make the system easier to access.
 
-Using a higher quality camera with less radial distortion and higher resolution on the drone will provide better results, but the companion computer may need to be upgraded to handle a higher resolution video feed. 
+Using a higher quality camera with less radial distortion and higher resolution on the drone will provide better results, but the companion computer may need to be upgraded to handle a higher resolution video feed.
 
 
 \section{Chapter Summary}
-All chapters except Chapter 1 must include an introductory paragraph/s and a chapter summary.
+This chapter provides the conclusion and result of the study. Recommendations to further improve the system are mentioned in the chapter.
 
 \FloatBarrier

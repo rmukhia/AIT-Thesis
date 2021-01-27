@@ -1,5 +1,6 @@
 % set 0.5 inch indentation
-\setlength{\parindent}{0.5in} 
+% \setlength{\parindent}{0.5in}
+\setlength{\parindent}{0pt}  
 % set paragraph space = 0 space
 \setlength{\parskip}{0mm}
 % set line space 1.5
@@ -8,13 +9,13 @@
 \chapter{METHODOLOGY}
 \label{ch:methodology}
 
-The different components of the proposed system and how they work together are described in this chapter.
+The different components of the proposed system and how they work together are described in this chapter. This chapter describes in detail the functional components of the system; the presentation layer, planning layer, motion control layer, image acquisition layer and the map building layer.
 
 \section{System Overview}
 The system uses multiple drones with PixHawk flight controllers, each paired with an individual companion computer and a ground control station (GCS). The operator sets the origin of the global map and select a region of interest on the GCS using Mapviz, a ROS package. The system creates a grid over the region of interest and calculate paths for the drones. After the expected paths are calculated, the system calibrates the drones by finding an accurate transformation between each drone's local frame of reference and the global frame. To accomplish this, the drones move along a predefined flight path while the transformations between each drone's local map and the global map is refined. After calibration is complete, the system coordinates the flights of the drones as they move along the paths the system calculated, ensuring coverage of the region of interest. While flying their paths, the drones stream images from their cameras to the GCS. On the GCS, the SfM module receives the images and constructs an aerial map (a textured 3D mesh) with respect to the global map frame for the region of interest initially selected by the operator.
 
 
-All the components runs on a single computer while simulating the system. In simulation mode, PX4 will be run in software in the loop (SITL) mode. Gazebo will be used to visualize the physical world and render simulated video feeds. Network Simulator 3 (NS3) will be used to simulate the networking functions of the wireless mesh network.
+All the components runs on a single computer while simulating the system. In simulation mode, PX4 will be run in software in the loop (SITL) mode. Gazebo will be used to visualize the physical world and render simulated video feeds. Network Simulator 3 (ns-3) will be used to simulate the networking functions of the wireless mesh network.
 
 \section{System Design}
 
@@ -24,20 +25,20 @@ The different components comprising the system are described here.
 
 The system can be divided into two domains, one comprising the components in the drones, and the other comprising the components in the GCS. Components running on drones do not share information with other drones; they only share with the GCS. These components will be involved with vehicle platform manipulation and forwarding the images captured. The components on the GCS will be involved with getting the initial region of interest from the operator, planning the path of each drone, coordinating the movement of each drone during plan execution, requesting and receiving images from the drones, and aerial mapping from the images received.
 
-The flight controller is installed with PX4 firmware. The companion computers and the GCS runs Ubuntu or Raspbian Linux with the Robot Operating System (ROS) installed and is connected to a wireless mesh network through IEEE 802.11 devices.
+The flight controller is installed with PX4 firmware. The companion computers and the GCS runs Raspbian Linux and Ubuntu respectively with the Robot Operating System (ROS) installed and is connected to a wireless mesh network through wireless mesh routers. The mesh routers form a backbone mesh network and the devices are connected via the gateway network of the routers.
 
 The components on the GCS are illustrated in Figure~\ref{fig:gcs-components} and as follows:
 \begin{itemize}
-	\item \textit{Computer.} An i7 laptop with 16 GB of RAM running Ubuntu 18 is the processing unit of the GCS.
-	\item \textit{Wirless mesh router.}  Wireless mesh router provides mesh network to the laptop, as well as maintain mesh network with the drones.
-	\item \textit{Robot Operating System.} All the components is designed and implemented with ROS as the base infrastructure. This gives access to the plethora of ROS tools and packages.
-	\item \textit{mapviz.} Mapviz running as a plugin inside rqt is the GUI interface for the system. Mapviz is a ROS-based visualization tool with a plug-in system focused on visualization of 2D data. It shows tiled maps using the Microsoft Bing Maps API and has plugins to select polygons on the map, show markers, show NavSat data, among other features that fit the requirements of this system. Mapviz also allows us to fix the origin of the global map.
-	\item \textit{image\_pipeline}. ROS image pipeline is used to rectify the image obtained from the cameras attached to the drones.
-	\item \textit{pegasus\_planner.} A new multi-agent path planning ROS node is designed for the project.
-	\item \textit{pegasus\_controller.} A new ROS node that calculates and maintains translations between different map frames, monitor links with the drones, transmit path planning information to the drones, and coordinate the drones during flight.
-	\item \textit{pegasus\_image\_subscriber.} A new ROS node that requests and receives images from the drones.
-	\item \textit{pegasus\_image\_rectify.} A new ROS node that rectifies the received images for each individual drones' cameras using image\_pipeline.  
-	\item \textit{Structure from Motion software.} An aerial map is constructed using the rectified images acquired from drones by this component. ODM (Open Drone Map) is used to build the map. ODM uses OpenSfM, an open source SfM software framework.
+	\item \textit{Computer}: An i7 laptop with 16 GB of RAM running Ubuntu 18 is the processing unit of the GCS.
+	\item \textit{Wirless mesh router}:  Wireless mesh router provides mesh network to the laptop, as well as maintain mesh network with the drones.
+	\item \textit{Robot Operating System}: All the components is designed and implemented with ROS as the base infrastructure. This gives access to the plethora of ROS tools and packages.
+	\item \textit{mapviz}: Mapviz running as a plugin inside rqt is the GUI interface for the system. Mapviz is a ROS-based visualization tool with a plug-in system focused on visualization of 2D data. It shows tiled maps using the Microsoft Bing Maps API and has plugins to select polygons on the map, show markers, show NavSat data, among other features that fit the requirements of this system. Mapviz also allows us to fix the origin of the global map.
+	\item \textit{image\_pipeline}: ROS image pipeline is used to rectify the image obtained from the cameras attached to the drones.
+	\item \textit{pegasus\_planner}: A new multi-agent path planning ROS node is designed for the project.
+	\item \textit{pegasus\_controller}: A new ROS node that calculates and maintains translations between different map frames, monitor links with the drones, transmit path planning information to the drones, and coordinate the drones during flight.
+	\item \textit{pegasus\_image\_subscriber}: A new ROS node that requests and receives images from the drones.
+	\item \textit{pegasus\_image\_rectify}: A new ROS node that rectifies the received images for each individual drones' cameras using image\_pipeline.  
+	\item \textit{Structure from Motion software}: An aerial map is constructed using the rectified images acquired from drones by this component. ODM (Open Drone Map) is used to build the map. ODM uses OpenSfM, an open source SfM software framework.
 \end{itemize}
 
 \begin{figure}
@@ -49,15 +50,15 @@ The components on the GCS are illustrated in Figure~\ref{fig:gcs-components} and
 
 The components in the drones are illustrated in Figure~\ref{fig:drone-components} and as follows:
 \begin{itemize}
-	\item \textit{Flight Controller.} The drones uses Pixhawk flight controllers with PX4 as their firmware.
-	\item \textit{Companion Computer.} The companion computer controls the flight controller in off-board mode through a serial link.
-	\item \textit{Mobile wireless mesh router.} The mobile wireless mesh router maintains mesh network using OSLR, and provides network to the companion computer through ethernet link.
-	\item \textit{USB camera.} The USB camera attached to the computer enables the drone to capture images.
-	\item \textit{Robot Operating System.} The software components are designed and implemented as ROS nodes.
-	\item \textit{mavros.} The companion computer uses mavros, a ROS package for MavLink communication between companion computers, and flight controllers, to control the flight controller in off-board.
-	\item \textit{gscam.}  Gscam is used to acquire video stream from the camera attached to the drone. Gscam is a ROS package which is based upon gstreamer.
-	\item \textit{pegasus\_commander.} A new ROS node designed for the project that receives paths and control messages from the GCS. It publishes and subscribe to mavros for controlling, and receiving status of the drone. It also sends to the GCS, the drone's local poses, GPS positions, flight controller status updates, and GCS link monitoring information.
-	\item \textit{pegasus\_image\_publisher.} The video feed from the onboard camera is captured, geo-tagged with GPS information and sent to the GCS by this component.
+	\item \textit{Flight Controller}: The drones uses Pixhawk flight controllers with PX4 as their firmware.
+	\item \textit{Companion Computer}: The companion computer controls the flight controller in off-board mode through a serial link.
+	\item \textit{Mobile wireless mesh router}: The mobile wireless mesh router maintains mesh network using OSLR, and provides network to the companion computer through ethernet link.
+	\item \textit{USB camera}: The USB camera attached to the computer enables the drone to capture images.
+	\item \textit{Robot Operating System}: The software components are designed and implemented as ROS nodes.
+	\item \textit{mavros}: The companion computer uses mavros, a ROS package for MavLink communication between companion computers, and flight controllers, to control the flight controller in off-board.
+	\item \textit{gscam}:  Gscam is used to acquire video stream from the camera attached to the drone. Gscam is a ROS package which is based upon gstreamer.
+	\item \textit{pegasus\_commander}: A new ROS node designed for the project that receives paths and control messages from the GCS. It publishes and subscribe to mavros for controlling, and receiving status of the drone. It also sends to the GCS, the drone's local poses, GPS positions, flight controller status updates, and GCS link monitoring information.
+	\item \textit{pegasus\_image\_publisher}: The video feed from the onboard camera is captured, geo-tagged with GPS information and sent to the GCS by this component.
 \end{itemize}
 
 \begin{figure}
@@ -82,19 +83,18 @@ The drones uses mavros, a ROS package that exposes MavLink protocol parameters a
 
 Pegasus\_rectify\_image rectifies the images received using the camera calibration parameters, prepares the images for map building and saves them to a directory in GCS . The SfM module constructs an aerial map for the region of interest selected by the operator from the rectified images.
 
-
 \subsection{Simulation}
 
 Most of the components remains the same regardless of whether running in simulation or in the real world. The simulation runs in a single computer. Four more components will be utilized to simulate the system:
 \begin{itemize}
-	\item \textit{Gazebo.} Gazebo simulator is used because it supports fleet of drones and camera feed.
-	\item \textit{PX4 Software in the loop.} PX4 firmware is run as software in the loop, to simulate the drone's firmware. 
-	\item \textit{pegasus-net-sim.} A custom network simulator 3 module simulates the mobility of the drones, and simulate the network behavior of actual control messages and video feed between the drones and the GCS. It will also publish the SNR status of each device in the network.
-	\item \textit{pegasus\_network\_status\_util\_node.} A custom ROS node receives noise and signal strength from pegasus-net-sim and publishes the signal-to-noise ratio (SNR) value of each drone as ROS topic.
+	\item \textit{Gazebo}: Gazebo simulator is used because it supports fleet of drones and camera feed.
+	\item \textit{PX4 Software in the loop}: PX4 firmware is run as software in the loop, to simulate the drone's firmware. 
+	\item \textit{pegasus-net-sim}: A custom network simulator 3 module simulates the mobility of the drones, and simulate the network behavior of actual control messages and video feed between the drones and the GCS. It will also publish the SNR status of each device in the network.
+	\item \textit{pegasus\_network\_status\_util\_node}: A custom ROS node receives noise and signal strength from pegasus-net-sim and publishes the signal-to-noise ratio (SNR) value of each drone as ROS topic.
 \end{itemize}
 
 
-PX4 software in the loop (SITL) is used to simulate the drone. PX4 SITL uses Gazebo to simulate the world, the drone mechanics and the video feed. Pegasus-net-sim, a Network Simulator 3 custom module is used to simulate the wireless mesh network. Pegasus-net-sim receives the model info from Gazebo and update the position of its nodes. Each node in pegasus-net-sim have NS3PegasusApp, a custom ns3 application installed, that sends and receives packets in the simulated network. Pegasus-net-sim functions as a proxy application that receives data in one udp port, simulate it in ns3 and transmit it through another udp socket. Using the trace feature in ns3, pegasus-net-sim publishes the noise and signal value for each node of the wireless mesh network.
+PX4 software in the loop (SITL) is used to simulate the drone. PX4 SITL uses Gazebo to simulate the world, the drone mechanics and the video feed. Pegasus-net-sim, a Network Simulator 3 custom module is used to simulate the wireless mesh network. Pegasus-net-sim receives the model info from Gazebo and update the position of its nodes. Each node in pegasus-net-sim have NS3PegasusApp, a custom ns-3 application installed, that sends and receives packets in the simulated network. Pegasus-net-sim functions as a proxy application that receives data in one udp port, simulate it in ns-3 and transmit it through another udp socket. Using the trace feature in ns-3, pegasus-net-sim publishes the noise and signal value for each node of the wireless mesh network.
 
 Figure~\ref{fig:gcs-components-simulated} and Figure~\ref{fig:drone-components-simulated} illustrate the components used in simulation. 
 
@@ -114,15 +114,15 @@ Figure~\ref{fig:gcs-components-simulated} and Figure~\ref{fig:drone-components-s
 
 \subsubsection{pegasus-net-sim}
 
-Network Simulator 3 is used to simulate wireless mesh network infrastructure. Ns3 provides a framework to write simulations that can be integrated with other software. For this study ns3 has to:
+Network Simulator 3 is used to simulate wireless mesh network infrastructure. Ns-3 provides a framework to write simulations that can be integrated with other software. For this study ns-3 has to:
 \begin{itemize}
 	\item Simulate a wireless mesh network with OLSR as the underlying mesh protocol to build the routing table for each node.
 	\item Update the position of the nodes using the pose information from Gazebo. Gazebo library will be used to subscribe to gazebo pose topic.
-	\item Inject and eject real world traffic between GCS and drones to the ns3 simulation. Pegasus-net-sim will be designed as a proxy application between the components of the pegasus system to intercept traffic among them.
-	\item Trace the signal noise value different nodes and publish it using the trace feature of ns3.
+	\item Inject and eject real world traffic between GCS and drones to the ns-3 simulation. Pegasus-net-sim will be designed as a proxy application between the components of the pegasus system to intercept traffic among them.
+	\item Trace the signal noise value different nodes and publish it using the trace feature of ns-3.
 \end{itemize}
 
-The architecture diagram of pegasus-net-sim is given in Figure~\ref{fig:pegasus-net-sim}. NS3PegasusDroneApp is a custom application for ns3 that will inject and eject the udp packets to and from the simulation. Each ns3 node will have a NS3PegasusDroneApp installed. A NS3PegasusDroneApp will have a set of PegassUDPSocket encapsulating real udp sockets and its virtual ns3 socket counterpart. Each PegasusUDPSocket class will have transmit and receive threads. These threads will continuously poll for any packet to send or receive in the real udp socket. PegasusUDPSocket will have a tx and rx lockless queue. Receive thread of a socket will write to the rx queue when it receives a packet. Transmit thread will poll the tx queue and transmit the packet to socket. NS3PegasusDroneApp running in ns3 simulation will poll the rx/tx queues of the PegasusUDPSocket in its set and inject/eject the packets to its virtual udp socket inside the simulation.
+The architecture diagram of pegasus-net-sim is given in Figure~\ref{fig:pegasus-net-sim}. NS3PegasusDroneApp is a custom application for ns-3 that will inject and eject the udp packets to and from the simulation. Each ns-3 node will have a NS3PegasusDroneApp installed. A NS3PegasusDroneApp will have a set of PegassUDPSocket encapsulating real udp sockets and its virtual ns-3 socket counterpart. Each PegasusUDPSocket class will have transmit and receive threads. These threads will continuously poll for any packet to send or receive in the real udp socket. PegasusUDPSocket will have a tx and rx lockless queue. Receive thread of a socket will write to the rx queue when it receives a packet. Transmit thread will poll the tx queue and transmit the packet to socket. NS3PegasusDroneApp running in ns-3 simulation will poll the rx/tx queues of the PegasusUDPSocket in its set and inject/eject the packets to its virtual udp socket inside the simulation.
 
 \begin{figure}
 	\centering
@@ -148,9 +148,9 @@ The architecture diagram of pegasus-net-sim is given in Figure~\ref{fig:pegasus-
 To intercept and route a packet within pegasus-net-sim, it has:
 \begin{itemize}
 	\item \textit{port}: The real udp port that intercepts real world traffic.
-	\item \textit{virtual port}: The ns3 virtual port that simulates port.
+	\item \textit{virtual port}: The ns-3 virtual port that simulates port.
 	\item \textit{peer port}: The real udp port which the port transmits to.
-	\item \textit{virtual peer port}: The ns3 virtual udp port that the traffic gets transmitted to.
+	\item \textit{virtual peer port}: The ns-3 virtual udp port that the traffic gets transmitted to.
 \end{itemize}
 
 
@@ -160,32 +160,32 @@ The port and virtual port setting is implicitly set to be the same port number. 
 
 std::map<std::string, std::vector<PegasusPortConfig>> 
 PegasusConfig::m_config {
-{
-"iris_0", {
-{5444, 4444, 3444},
-{7300, 7400, 7200},
-}
-},
-{
-"iris_1", {
-{5445, 4445, 3445},
-{7301, 7401, 7201},
-}
-},
-{
-CONTROL_STATION_STR , {
-{3444, 6444, 5444},
-{7200, 8200, 7300},
-{3445, 6445, 5445},
-{7201, 8201, 7301},
-}
-},
+  {
+    "iris_0", {
+      {5444, 4444, 3444},
+      {7300, 7400, 7200},
+    }
+  },
+  {
+    "iris_1", {
+      {5445, 4445, 3445},
+      {7301, 7401, 7201},
+    }
+  },
+  {
+    CONTROL_STATION_STR , {
+      {3444, 6444, 5444},
+      {7200, 8200, 7300},
+      {3445, 6445, 5445},
+      {7201, 8201, 7301},
+   }
+  },
 };
 \end{verbatim}
 
 \subsection{pegasus\_network\_status\_util\_node}
 
-The ns3 module pegasus-net-sim traces the signal and noise decibel of each packet of each node, smooths and averages it out per 100 millisecond per node and advertises it to udp port 2999. The pegasus\_network\_status\_util\_node reads the information on udp port 2999, and publishes signal to noise ratio (SNR) as ROS topics for each node for the user to analyses. 
+The ns-3 module pegasus-net-sim traces the signal and noise decibel of each packet of each node, smooths and averages it out per 100 millisecond per node and advertises it to udp port 2999. The pegasus\_network\_status\_util\_node reads the information on udp port 2999, and publishes signal to noise ratio (SNR) as ROS topics for each node for the user to analyses. 
 
 \section{Functional Components}
 The functional software components of the pegasus system can be categorized as:
@@ -210,7 +210,7 @@ This layer presents how an operator interacts with the system. The front-end of 
 
 
 \subsubsection{Mapviz}
-Mapviz requires the operator to select the global map origin as a ROS parameter. ROS parameters can be set through the rosparams command-line tool, programmatically or in the launch file. In our case, we set the local map origin though the launch file using the ROS package swri\_transform\_util.
+Mapviz requires the operator to select the global map origin as a ROS parameter. ROS parameters can be set through the rosparams command-line tool, programmatically or in the launch file. In our case, we set the global map origin though the launch file using the ROS package swri\_transform\_util.
 
 
 \begin{verbatim}
@@ -249,7 +249,7 @@ The flow that the operator has to follow while using this GUI is presented in Fi
 
 \begin{figure}
 	\centering
-	\caption[Operator interaction with pegasus system]{\small A flowchart of the operator's interaction with the presentation layer.}
+	\caption[Operator interaction with Pegasus system]{\small A flowchart of the operator's interaction with the presentation layer.}
 	\includegraphics[width=5in]{figures/methodology/presentation/presentation-flow}
 	\label{fig:presentation-flow}
 \end{figure}
@@ -257,7 +257,7 @@ The flow that the operator has to follow while using this GUI is presented in Fi
 
 \begin{figure}
 	\centering
-	\caption[Operator interaction with pegasus system; a scenerio.]{\small 
+	\caption[Operator interaction with Pegasus system; a scenerio.]{\small 
 		A scenario where an operator (a) Selects an area of interest (b) Publishes the polygon (c) Calls start\_planning service.}
 	\subfloat[]{%
 		\includegraphics[width=4in]{figures/methodology/presentation/mapviz-1}%
@@ -330,7 +330,6 @@ x^{n-1} & y^{n-1} \\
 $$
 
 The vertices are arranged counter-clockwise/clockwise. To find the bounding box of the polygon, we need to find the vertices.
-
 $$
 \text{boundingBox} = \begin{bmatrix}
 x_{min} & y_{min} \\
@@ -339,9 +338,6 @@ x_{max} & y_{max} \\
 x_{min} & y_{max}
 \end{bmatrix},
 $$
-
-
-
 where each row defines a vertex. Consider a grid with $n$ cells either horizontally or vertically. Let $c$ be the grid cell size.
 
 $$c = \text{BoundingBox}_{width|heigh} \div  n $$
@@ -384,8 +380,6 @@ We can then calculate grid index $(i,j)$ from $[0, k]$:
 $$j = \left\lfloor\frac{k}{i_{max}}\right\rfloor$$
 $$i = k  - j \times i_{max}.$$
 
-
-
 Since the vertex $v$ of the polygon is arranged counter-clockwise/clockwise, we can easily get the vertices of line segment for each side of the polygon.
 
 $$v_i = (x_i, y_i)$$
@@ -427,9 +421,9 @@ Now we apply ray tracing to check if $cell^{i,j}$ is inside our polygon or not. 
 
 \textbf{Multi-agent Coverage Path Planning}
 
-Considering a set of cells  $C$ for an area of interest with $n$ agents.  Multi-agent coverage path planning should compute coverage paths $p_i$ for each $ith$ agent where $p_i \subset C$ and  $\bigcup\limits_{i=1}^{n} p_i \subseteq C$. If $\bigcup\limits_{i=1}^{n} p_i = C$, then complete coverage is obtained.
+Considering a set of cells  $C$ for an area of interest with $n$ agents.  Multi-agent coverage path planning should compute coverage paths $p_i$ for each $ith$ agent where $p_i \subset C$ and  $\bigcup\limits_{i=1}^{n} p_i \subseteq C$. If $\bigcup\limits_{i=1}^{n} p_i = C$, then complete coverage is obtained. 
 
-We use A* search to find $p_i$ in $C$ for each agent. Let the set of search space in the A* search space be denoted as $S$, which is a tree with root node $s_0$.
+We use A* search to find $p_i$ in $C$ for each agent. Let the set of search space in the A* search space be denoted as $S$, which is a tree with root node $s_0$. For A* search the grid index is used to represent the position of the agents and cells, not the real world position. 
 
 A* search uses the cost function
 $$ f = g + h $$
@@ -437,71 +431,79 @@ $$ f = g + h $$
 Where $g_k$ is the total cost till the current state $s_k$ and $h_k$ is the heuristic cost till the goal state $s_\text{goal}$ from $s_k$. $k$ is the id of nodes in the search tree.
 
 
-There are 8 directions an agent can move to:
+There are nine directions an agent can move to:
 \begin{enumerate}
-	\item Right
-	\item Right-Top
-	\item Top
-	\item Left-Top
-	\item Left
-	\item Left-Bottom
-	\item Bottom
-	\item Right-Bottom
+	\item Right,
+	\item Left,
+	\item Up,
+	\item Down,
+	\item Right up,
+	\item Left up,
+	\item Left down, 
+	\item Right down,
+	\item Stay.
 \end{enumerate}
 
 
-In our case in each state progression a single agent moves in one direction, in round-robin fashion.  For example, if there are 3 agents, in state $s_l$ agent 1 may move left, in state $s_{l+1}$ agent 2 may move right, in state $s_{l+2}$ agent 3 may move  bottom, in state $s_{l+3}$ agent 1 may move top, and so on.
+In our case in each state progression a single agent moves in one direction.  For example, if there are three agents, in state $s_l$ agent 1 may move left, in state $s_{l+1}$ agent 2 may move right, in state $s_{l+2}$ agent 3 may move down, in state $s_{l+3}$ agent 1 may move top, and so on.
 
-Let us define $g_k$ and $h_k$ for our setup. Let $m_k$ be the movement cost of agents to reach state $s_k$ from previous state $s_{k-1}$.
+Let us define $g_k$ and $h_k$ for our planner. $m_k^c$ is the movement cost accumulated in cell $c \in C$ at state $s_k$. 
 
-$$ m_k = 1, \text{if agent reaches an unvisited cell}. $$
-$$ m_k = m_{prev} \times 2, \text{if agent reaches a visited cell, with previous movement cost } m_{prev} $$
+For right, left, up and down movement:
+$$ m_k^c = 1, \text{if agent reaches an unvisited cell.}$$
+$$ m_k^c = m_{k-1}^c \times 5, \text{if agent reaches a visited cell.}$$
 
-Therefore, $\sum\limits_{k=0}^k m_k$ is the sum of all movement cost for agents to reach $s_k$ from $s_0$.
+For diagonal movements and stay:
+$$ m_k^c = 1.44, \text{if agent reaches an unvisited cell.} $$
+$$ m_k^c = 1.44 \cdot (5 \cdot m_{k-1}^c), \text{if agent reaches a visited cell.}$$
 
-$$g_k = \sum\limits_{k=0}^k m_k $$
+Therefore, the total movement cost at state $s_k$ is $m_k = \sum\limits^C m_k^c$.
 
-$$ h_k = \text{unvisited cells in } C$$
+$$g_k = m_k $$
+
+$$ h_k = h_k^{free} + h_k^{dist}$$
+
+$h_k^{free}$ is the number of unvisited cells at state $s_k$, which can be defined as $|\{c \in C | m_k^c = 0\}|$. $h_k^{dist}$ is the minimum euclidean distance between any agents' position and the closest unvisited cell at state $s_k$.
 
 
 Therefore, a state $s_k$ will have:
 \begin{itemize}
-	\item $m_k$. The immediate movements to reach $s_k$.
-	\item $g_k$. All movements for all agents to reach state $s_k$.
-	\item $h_k$. Unvisited cell at $s_k$.
-	\item $O_k$. Set of cells that the agents are occupying in the state $s_k$.
-	\item $V_k$. Visited cells with recorded movement costs. To compute $h_k$ for the state.
+	\item $m_k^c$: The immediate movements to reach $s_k$.
+	\item $g_k$: All movement cost for all agents to reach state $s_k$.
+	\item $h_k$: Number of unvisited cell and minimum euclidean distance to the closest unvisited cell at $s_k$ .
+	\item $O_k$: Set of cells that the agents are occupying in the state $s_k$.
+	\item $K_k$: Cells with recorded movement costs. To compute $h_k$ for the state.
 \end{itemize}
 
-$$ s_k = \{m_k, g_k, h_k, O_k, V_k\} $$
+$$ s_k = \{m_k^c, g_k, h_k, O_k, K_k\} $$
 
-We must define equality operation for the state for A* to work.
+$E_k \subset K_k$, are the cells which have not been visited at $s_k$. We must define equality operation for the state for A* search to work.
 
-$$ s_\sigma = s_\theta, \iff O_\sigma = O_\theta $$
+$$ s_\sigma = s_\theta, \iff O_\sigma = O_\theta \land E_{k_{\sigma}} = E_{k_{\theta}} $$
 
 
-The other parameters we need to set for our A* algorithm are:
+The other parameters we need to set for our A* search algorithm are:
 \begin{itemize}
-	\item \textit{MAX\_DISTANCE.} The max range of mesh client. 
-	\item \textit{CS\_POSITION.} The position of control station in global map.
-	\item \textit{Z\_HEIGHT.} The operational height of agents.
+	\item \textit{MAX\_DISTANCE}: The real world maximum range of mesh client. 
+	\item \textit{CS\_POSITION}: The real world position of control station in global map.
+	\item \textit{Z\_HEIGHT}: The real world operational height of agents.
 \end{itemize}
 
 
 The constraints for A* search are:
 \begin{itemize}
 	\item At least one agent must move.
-	\item The euclidean distance between any two pair of agents should not be greater than MAX\_DISTANCE.
-	\item At least one agent should have euclidean distance with CS\_POSITION less than or equal to MAX\_DISTANCE.
+	\item The euclidean distance between the real world positions of any two pair of agents should not be greater than MAX\_DISTANCE.
+	\item At least one agent should have euclidean distance with the real world position of CS\_POSITION less than or equal to MAX\_DISTANCE.
 	\item Any two agents cannot swap position. $$\begin{matrix} \label{eq:swap_agent}
-	A & B && \to && B & A\\
+	A & B && \not\to && B & A\\
 	0 & 0 && && 0 & 0
 	\end{matrix} \\
 	$$
 	
 	\item Any two agents path line equation must not intersect between the previous cell and present cell. $$
 	\begin{matrix} \label{eq:intersect_agent}
-	A & 0 && \to && 0 & B\\
+	A & 0 && \not\to && 0 & B\\
 	B & 0 &&&& 0 & A
 	\end{matrix}
 	$$
@@ -509,25 +511,30 @@ The constraints for A* search are:
 
 Running A* using these parameters computes paths $p_i$, with $\bigcup\limits_{i=1}^{n} p_i = C$. However, it is not efficient as A* is not an approximation algorithm but an exhaustive search algorithm, and the problem we are trying to solve is NP-hard.
 
+Branching factor for each node of our search tree is nine. However, the depth of the search tree increases as we add more agents. Therefore, the number of cells and agents drastically increases our running time. To decrease this, we will not compute the optimal steps to the end step, but we will look ahead certain number of steps, and progressively step ahead. This way we may not get the optimal solution, but the computing time will be saved. 
 
-Branching factor for each node of our search tree is 8. However, the depth of the search tree increases as we add more agents. Therefore, the number of cells and agents drastically increases our running time. To decrease this,we will not compute the optimal steps to the end step, but we will lookahead certain number of steps, and progressively step ahead. This way we may not get the optimal solution, but the computing time will be saved. 
-
-We will progressively reach our goal state through iterations of A* algorithm. For each A* iteration, we will stop the search by:
+We will progressively reach our goal state through iterations of A* search algorithm. For each A* iteration, we will stop the search by:
 \begin{itemize}
-	\item \textit{Depth Exit.} The depth exit mechanism will return $d$ number of decision $D$, that is it will travel $d+1$ depth in the search space and return the $D_d$ decision set. 
-	\item \textit{Early Exit.} If we do not minimize the cost $f$ for  $\epsilon$ number of nodes, we will do early exit.
-	
+	\item \textit{Depth exit}: The depth exit mechanism will return $d$ number of states, that is it will travel $d+1$ depth in the search space and return the optimum $D_q$ path. 
+	\item \textit{Early exit}: If we do not minimize the cost $f$ for $\epsilon$ number of nodes, we will do early exit and return $D_q$, the path with the best heuristics encountered.
+	\item \textit{Increasing depth exit}: In the beginning of the search, none of the cells are visited. Therefore small depth exit values ($\geq 2$) is used in the beginning to cover the cells, and as more cells are visited, increase the depth exit value proportionally ($\le d$). This makes the algorithm greedy at the beginning of the search and as the states before more complex, it starts taking more intelligent decisions. This is done by using the curve,
+	$$y=x^c$$
+	$$x = \frac{|K_k - E_k|}{|K_k|}.$$ $c < 1$ such that the the depth exit value rises fast to $d$.
 \end{itemize}
 
-If the optimal decisions is $o$, the agent will take $q$ number of $d$ decision, where the cost will be
+In this algorithm the agents will calculated $q$ number of $D$ paths iteratively. If the optimal path is the search space is $o$, the path returned by the planner will be sub-optimal. 
 
-$$o \le \Sigma_{i=0}^q D^{0-d}_i$$
+$$cost(o) \le \sum\limits_{i=0}^q cost(D_i)$$
 
-Also, if the heuristics does not improve for $\sigma$ A* iterations, then the search will stop.
+Also, if the heuristics does not improve for $\sigma$ A* iterations, then the search will stop. In this case, all the cells will not be covered.
 
-$$ if, D^{0-d}_i == D^{0-d}_{i+1}, \forall \space 0 \le i < \sigma - 1; \text{stop}$$
+$$ if, h(D_i) = h(D_{i+1}), \forall \space 0 \le i < \sigma - 1; \text{stop}$$
 
-The resulting decision list may have trailing states which have the same $h$. This is inconvenient for us and does not contribute to our problem, so we will trim the decision to the least $h$
+Then the paths $D_q$ are concatenated to form a single path. The resulting path may have trailing states which have the same $h$. This is inconvenient  and does not contribute to the solution, so the trailing states with the same $h$ are pruned.
+
+A single agent needs to explore all the cells hence it does not utilize the heuristics given for multiple agents. For single agent path planning, the cost function is modified to $f_k = g_k$. This cost function changes A* search into Dijkstra algorithm and explores all states.
+
+After the A* search is complete and the paths are concatenated and pruned, the movement of each agent is separated into different lists, from the final path. Then the paths for the agents are built by referring to movement list of the agents and the position of the cells in the global map. The yaw of the agents in the paths are calculated with the formula $ \alpha = \tan^{-1} \left( \frac{y_2-y_1}{x_2-x_1} \right)$. The height of the poses in the path is set to Z\_HEIGHT. The paths are published to the ROS topics \texttt{/pegasus/[agent]/path}.
 
 \subsection{Motion Control}
 
@@ -609,7 +616,7 @@ The drone takes off in its home position. After it reaches its operational heigh
 
 \begin{figure}
 	\centering
-	\caption[Predefined routine before the start of the coordinated path traversal]{\small Predefined routine before the start of the coordinated path traversal. Steps 1-4 will be executed in CALIBRATE state, step 5 will be executed in PRE\_RUN state, and in step 6 the drone will move to the first pose in the planned path.} 
+	\caption[Predefined routine before the start of the coordinated path traversal.]{\small Predefined routine before the start of the coordinated path traversal. Steps 1-4 will be executed in CALIBRATE state, step 5 will be executed in PRE\_RUN state, and in step 6 the drone will move to the first pose in the planned path.} 
 	\includegraphics[width=5in]{figures/methodology/methodology-calibration-routine}
 	\label{fig:calibration-routine}
 \end{figure}
@@ -710,19 +717,20 @@ For SET\_ARM, SET\_OFFBOARD and SET\_RETURN\_TO\_HOME it calls the relevant mavr
 \end{figure}
 
 \subsubsection{PX4}
-The drone runs PX4 Firmware on the flight controller. The flight controller's movement and altitude can be controlled in off-board mode through the MAVlink protocol. This mode supports only a very limited set of MAVLink commands.
+The drone runs PX4 Firmware on the flight controller. The flight controller's movement and altitude can be controlled in off-board mode through the MAVlink protocol. The MAVLink commands supported in this mode are.
 
-MAVLink commands supported in off-board modes are:
 \begin{itemize}
 	\item SET\_POSITION\_TARGET\_LOCAL\_NED: Control vehicle position.
 	\item SET\_ATTITUDE\_TARGET: Control vehicle altitude and orientation.
 \end{itemize}
 
-PX4 supports the coordinate frames (coordinate\_frame field): MAV\_FRAME\_LOCAL\_NED and MAV\_FRAME\_BODY\_NED.
+PX4 supports the coordinate frames: 
+\begin{itemize}
+	\item MAV\_FRAME\_BODY\_NED, and
+	\item MAV\_FRAME\_LOCAL\_NED.
+\end{itemize} 
 
-A stream of setpoint commands must be received by the vehicle prior to engaging the mode, and in order to remain in the mode (if the message rate falls below 2Hz the vehicle will stop). In order to hold position while in this mode, the vehicle must receive a stream of setpoints for the current position.
-
-Off-board mode requires an active connection to a remote MAVLink system (e.g. companion computer or GCS). If the connection is lost, after a timeout (COM\_OF\_LOSS\_T) the vehicle will attempt to land or perform some other failsafe action. The action is defined in the parameters COM\_OBL\_ACT and COM\_OBL\_RC\_ACT which can be set through mavros' mavparam.
+Before engaging the offboard mode a stream of pose must be receive by the flight controller. To keep the flight controller in off-board mode, poses must be publish at the rate of 2Hz or more otherwise it will exit from off-board mode. If it loses communication with an companion computer or GCS in off-board mode, after a timeout (COM\_OF\_LOSS\_T) the vehicle will attempt to land or perform some other failsafe action. The action is defined in the parameters COM\_OBL\_ACT and COM\_OBL\_RC\_ACT. These parameters can be set through mavros' mavparam.
 
 \subsubsection{Mavros}
 
@@ -836,6 +844,6 @@ $ rosrun pegasus_uav_ros pegasus_fov.py
 \end{verbatim}
 
 \section{Chapter Summary}
-All chapters except Chapter 1 must include an introductory paragraph/s and a chapter summary.
+This chapter documents the design of the proposed system. I have described multiple components working together in this system. I also descibed the components on the drone and the GCS.
 
 \FloatBarrier
